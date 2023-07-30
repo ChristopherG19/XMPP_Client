@@ -28,10 +28,10 @@ public class Main {
             connection.login();
             
             ChatManager chatManager = ChatManager.getInstanceFor(connection);
-            EntityBareJid jid = JidCreate.entityBareFrom("garcia20541redes@alumchat.xyz");
+            EntityBareJid jid = JidCreate.entityBareFrom("prueba20541test@alumchat.xyz");
             Chat chat = chatManager.chatWith(jid);
 
-            chat.send("Hello! desde otro lado");
+            chat.send("Hello! Prueba");
 
             System.out.println("Mensaje enviado exitosamente");
             connection.disconnect();
