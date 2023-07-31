@@ -16,10 +16,8 @@ public class AdminManager{
     
     String xmppDomainString = "alumchat.xyz";
 
-    public String Register(String username, String password) throws XmppStringprepException{
-        
+    public XMPPTCPConnectionConfiguration get_config(String username, String password) throws XmppStringprepException{
         DomainBareJid xmppDomain = JidCreate.domainBareFrom(xmppDomainString);
-        String result = "OK";
 
         XMPPTCPConnectionConfiguration config = XMPPTCPConnectionConfiguration.builder()
                 .setUsernameAndPassword(username,password)
@@ -28,19 +26,23 @@ public class AdminManager{
                 .setSecurityMode(SecurityMode.disabled)
                 .build();
 
+        return config;
+    }
+
+    public String Register(String username, String password) throws XmppStringprepException{
+        
+        String result = "OK";
+        XMPPTCPConnectionConfiguration config = get_config(username, password);
+
         AbstractXMPPConnection connection = new XMPPTCPConnection(config);
         try {
             connection.connect();
-
-            System.out.println(username);
-            System.out.println(password);
-            
+ 
             AccountManager accManager = AccountManager.getInstance(connection);
             accManager.sensitiveOperationOverInsecureConnection(true);
             accManager.createAccount(Localpart.from(username), password);
-
-            System.out.println("Cuenta creada exitosamente");
             connection.disconnect();
+
             return result;
         } catch (SmackException | IOException | XMPPException | InterruptedException e) {
             e.printStackTrace();
@@ -49,8 +51,19 @@ public class AdminManager{
         }
     }
 
-    public void Login(){
+    public AbstractXMPPConnection Login(String username, String password) throws XmppStringprepException{
+        XMPPTCPConnectionConfiguration config = get_config(username, password);
+        AbstractXMPPConnection connection = new XMPPTCPConnection(config);
 
+        try {
+            connection.connect();
+            connection.login();
+            return connection;
+
+        } catch (SmackException | IOException | XMPPException | InterruptedException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public void CloseSession(){

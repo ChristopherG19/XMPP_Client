@@ -38,9 +38,10 @@ public class Terminal {
         int option = 0;
 
         System.out.println("\n----- Chat Redes -----");
-        String welcome = String.format("Bienvenido/a %s", username);
+        String welcome = String.format("Usuario conectado: %s", username);
         System.out.println(welcome);
-        System.out.println("Opciones disponibles: ");
+        System.out.println("-----------------------");
+        System.out.println("\nOpciones disponibles: ");
         System.out.println("1) Mostrar todos los contactos y su estado");
         System.out.println("2) Agregar un usuario a los contactos");
         System.out.println("3) Mostrar detalles de contacto de un usuario");
@@ -84,6 +85,21 @@ public class Terminal {
             }
         }
         
+        return values;
+    }
+
+    public List<String> getUserCredentials(){
+        List<String> values = new ArrayList<>();
+
+        System.out.println("\nPara poder registrar una nueva cuenta necesitamos algunos datos...");
+        System.out.print("1) Nombre de usuario: ");
+        String username = scan.nextLine();
+        Console console = System.console();
+        char[] pswd = console.readPassword("2) Ingresa contrase\u00F1a: ");
+        String password = toString(pswd);
+
+        values.add(username);
+        values.add(password);
         return values;
     }
 
