@@ -13,7 +13,44 @@ import org.jxmpp.stringprep.XmppStringprepException;
 import java.io.IOException;
 
 public class Main {
+
     public static void main(String[] args) throws XmppStringprepException {
+
+        terminal Terminal = new terminal();
+
+        int adminOption = 0;
+        int userOption = 0;
+        while (adminOption != 5){
+            adminOption = Terminal.adminMenu();
+        
+            switch (adminOption) {
+                case 1:
+                    System.out.println("Opci\u00F3n 1");
+                    break;
+
+                case 2:
+                    System.out.println("Opci\u00F3n 2");
+                    break;
+
+                case 3:
+                    System.out.println("Opci\u00F3n 3");
+                    break;
+
+                case 4:
+                    System.out.println("Opci\u00F3n 4");
+                    break;
+
+                case 5:
+                    System.out.println("Opci\u00F3n 5");
+                    break;
+            
+                default:
+                    System.out.println("Opci\u00F3n invalida");;
+            }
+        
+        }
+
+        // Imprimir despedida
 
         XMPPTCPConnectionConfiguration config = XMPPTCPConnectionConfiguration.builder()
                 .setUsernameAndPassword("garcia20541redes","Christopher1910")
@@ -27,11 +64,11 @@ public class Main {
             connection.connect();
             connection.login();
             
-            ChatManager chatManager = ChatManager.getInstanceFor(connection);
-            EntityBareJid jid = JidCreate.entityBareFrom("prueba20541test@alumchat.xyz");
-            Chat chat = chatManager.chatWith(jid);
+            // ChatManager chatManager = ChatManager.getInstanceFor(connection);
+            // EntityBareJid jid = JidCreate.entityBareFrom("prueba20541test@alumchat.xyz");
+            // Chat chat = chatManager.chatWith(jid);
 
-            chat.send("Hello! Prueba");
+            // chat.send("Hello! Prueba");
 
             System.out.println("Mensaje enviado exitosamente");
             connection.disconnect();
