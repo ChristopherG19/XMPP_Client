@@ -1,8 +1,11 @@
 
+import java.util.List;
+import java.io.Console;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 
-public class terminal {
+public class Terminal {
 
     Scanner scan = new Scanner(System.in);
 
@@ -56,6 +59,38 @@ public class terminal {
         }
 
         return option;
+    }
+
+    public List<String> getNewUserInfo(){
+        List<String> values = new ArrayList<>();
+        Boolean allOK = false;
+
+        while (!allOK){
+            System.out.println("\nPara poder registrar una nueva cuenta necesitamos algunos datos...");
+            System.out.print("1) Nombre de usuario: ");
+            String username = scan.nextLine();
+            Console console = System.console();
+            char[] pswd = console.readPassword("2) Ingresa contrase\u00F1a: ");
+            String password = toString(pswd);
+            char[] pswdConf = console.readPassword("3) Confirma contrase\u00F1a: ");
+            String passwordConf = toString(pswdConf);
+
+            values.add(username);
+            if(password.equals(passwordConf)){
+                values.add(password);
+                allOK = true;
+            } else {
+                System.out.println("Las contrase\u00F1as no coinciden!!!");
+            }
+        }
+        
+        return values;
+    }
+
+    public static String toString(char[] a)
+    {
+        String string = new String(a);
+        return string;
     }
 
 }
