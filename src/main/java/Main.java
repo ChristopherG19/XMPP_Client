@@ -16,7 +16,7 @@ public class Main {
         
             switch (adminOption) {
                 case 1:
-                    System.out.println("\n---- Registro de cuenta ----");
+                    System.out.println("\n---- Register ----");
                     List<String> values = Terminal.getNewUserInfo();
                     String result = AM.Register(values.get(0), values.get(1));
                     if(result.equals("OK")){
@@ -30,7 +30,9 @@ public class Main {
                     List<String> valuesU = Terminal.getUserCredentials();
                     actualSession = AM.Login(valuesU.get(0), valuesU.get(1));
                     if (actualSession == null){
-                        System.out.println("Algo ha salido mal, intente nuevamente");
+                        System.out.println("\nAlgo ha salido mal, intente nuevamente");
+                        System.out.println("Tu usuario o contrase\u00F1a est\u00E1n incorrectos");
+                        System.out.println("O tu cuenta no existe en el servidor");
                     } else {
                         System.out.println("Bienvenido!!!");
                         int userP = Terminal.userMenu(valuesU.get(0));
@@ -45,7 +47,7 @@ public class Main {
                     }
                     break;
                 case 3:
-                    System.out.println("---- Cerrar sesi\u00F3n ----");
+                    System.out.println("---- Close session ----");
                     if(actualSession != null){
                         actualSession = AM.CloseSession(actualSession);
                     } else {
@@ -54,7 +56,20 @@ public class Main {
 
                     break;
                 case 4:
-                    System.out.println("Opci\u00F3n 4");
+                    System.out.println("---- Delete account ----");
+                    List<String> valuesLog = Terminal.getUserCredentials();
+                    actualSession = AM.Login(valuesLog.get(0), valuesLog.get(1));
+                    int opc = Terminal.get_close_session_answer();
+                    if(actualSession != null && opc == 1){
+                        AM.DeleteAccount(actualSession);
+                        System.out.println("Cuenta eliminada del servidor exitosamente");
+                    } else if(actualSession != null && opc == 0){
+                        System.out.println("Entendido, no se borrara esta cuenta");
+                    } else if(actualSession != null && opc == 2){
+                        System.out.println("Ha ocurrido un error, opcion invalida!");
+                    } else {
+                        System.out.println("No hay ninguna sesi\u00F3n activa\nInicia sesi\u00F3n para poder eliminar tu cuenta\n");
+                    }
                     break;
 
                 case 5:

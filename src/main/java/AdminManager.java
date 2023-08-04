@@ -4,6 +4,9 @@ import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.ConnectionConfiguration.SecurityMode;
+import org.jivesoftware.smack.SmackException.NoResponseException;
+import org.jivesoftware.smack.SmackException.NotConnectedException;
+import org.jivesoftware.smack.XMPPException.XMPPErrorException;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
 import org.jivesoftware.smackx.iqregister.AccountManager;
@@ -45,7 +48,6 @@ public class AdminManager{
 
             return result;
         } catch (SmackException | IOException | XMPPException | InterruptedException e) {
-            e.printStackTrace();
             result = "ERROR";
             return result;
         }
@@ -61,19 +63,24 @@ public class AdminManager{
             return connection;
 
         } catch (SmackException | IOException | XMPPException | InterruptedException e) {
-            e.printStackTrace();
             return null;
         }
     }
 
     public AbstractXMPPConnection CloseSession(AbstractXMPPConnection connection){
-        connection.disconnect();
+        if (connection != null && connection.isConnected()) {
+            connection.disconnect();
+        }
         System.out.println("Cuenta cerrada exitosamente! Vuelve pronto!");
         return null;
     }
 
-    public void DeleteAccount(){
-
+    public void DeleteAccount(AbstractXMPPConnection connection){
+        AccountManager accManager = AccountManager.getInstance(connection);
+        try {
+            accManager.deleteAccount();
+        } catch (NoResponseException | XMPPErrorException | NotConnectedException | InterruptedException e) {
+        }
     }
 
 }

@@ -91,7 +91,7 @@ public class Terminal {
     public List<String> getUserCredentials(){
         List<String> values = new ArrayList<>();
 
-        System.out.println("\nPara poder registrar una nueva cuenta necesitamos algunos datos...");
+        System.out.println("\nIngresa los siguientes datos para loggearte...");
         System.out.print("1) Nombre de usuario: ");
         String username = scan.nextLine();
         Console console = System.console();
@@ -101,6 +101,25 @@ public class Terminal {
         values.add(username);
         values.add(password);
         return values;
+    }
+
+    public int get_close_session_answer(){
+        int opc = 0;
+        System.out.print("Deseas eliminar esta cuenta del servidor (y/n)");
+        String opca = scan.nextLine();
+        switch (opca) {
+            case "y":
+                opc = 1;
+                break;
+            case "n":
+                opc = 0;
+                break;
+            default:
+                System.out.println("Opcion invalida");
+                opc = 2;
+                break;
+        }
+        return opc;
     }
 
     public static String toString(char[] a)
