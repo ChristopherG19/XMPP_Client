@@ -10,7 +10,7 @@ public class Main {
         AdminManager AM = new AdminManager();
 
         int adminOption = 0;
-        AbstractXMPPConnection actualSession;
+        AbstractXMPPConnection actualSession = null;
         while (adminOption != 5){
             adminOption = Terminal.adminMenu();
         
@@ -33,13 +33,26 @@ public class Main {
                         System.out.println("Algo ha salido mal, intente nuevamente");
                     } else {
                         System.out.println("Bienvenido!!!");
-                        Terminal.userMenu(valuesU.get(0));
+                        int userP = Terminal.userMenu(valuesU.get(0));
+                        switch (userP) {
+                            case 9:
+                                actualSession = AM.CloseSession(actualSession);
+                                break;
+                        
+                            default:
+                                break;
+                        }
                     }
                     break;
                 case 3:
-                    System.out.println("Opci\u00F3n 3");
-                    break;
+                    System.out.println("---- Cerrar sesi\u00F3n ----");
+                    if(actualSession != null){
+                        actualSession = AM.CloseSession(actualSession);
+                    } else {
+                        System.out.println("No hay ninguna sesi\u00F3n activa\n");
+                    }
 
+                    break;
                 case 4:
                     System.out.println("Opci\u00F3n 4");
                     break;

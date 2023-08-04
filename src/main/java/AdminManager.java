@@ -66,8 +66,10 @@ public class AdminManager{
         }
     }
 
-    public void CloseSession(){
-
+    public AbstractXMPPConnection CloseSession(AbstractXMPPConnection connection){
+        connection.disconnect();
+        System.out.println("Cuenta cerrada exitosamente! Vuelve pronto!");
+        return null;
     }
 
     public void DeleteAccount(){
