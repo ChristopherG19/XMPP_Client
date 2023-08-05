@@ -18,9 +18,11 @@ public class Main {
                 case 1:
                     System.out.println("\n---- Register ----");
                     List<String> values = Terminal.getNewUserInfo();
-                    String result = AM.Register(values.get(0), values.get(1));
-                    if(result.equals("OK")){
+                    AbstractXMPPConnection result = AM.Register(values.get(0), values.get(1));
+                    if(result != null){
                         System.out.println("Cuenta creada exitosamente");
+                        System.out.println(result);
+                        System.out.println("Bienvenido/a");
                     } else {
                         System.out.println("Algo ha salido mal, intente nuevamente");
                     }

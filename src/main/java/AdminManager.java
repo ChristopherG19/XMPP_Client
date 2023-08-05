@@ -17,6 +17,7 @@ import org.jxmpp.stringprep.XmppStringprepException;
 
 public class AdminManager{
     
+    Terminal Terminal = new Terminal();
     String xmppDomainString = "alumchat.xyz";
 
     public XMPPTCPConnectionConfiguration get_config(String username, String password) throws XmppStringprepException{
@@ -32,9 +33,8 @@ public class AdminManager{
         return config;
     }
 
-    public String Register(String username, String password) throws XmppStringprepException{
+    public AbstractXMPPConnection Register(String username, String password) throws XmppStringprepException{
         
-        String result = "OK";
         XMPPTCPConnectionConfiguration config = get_config(username, password);
 
         AbstractXMPPConnection connection = new XMPPTCPConnection(config);
@@ -44,12 +44,24 @@ public class AdminManager{
             AccountManager accManager = AccountManager.getInstance(connection);
             accManager.sensitiveOperationOverInsecureConnection(true);
             accManager.createAccount(Localpart.from(username), password);
-            connection.disconnect();
+            
+            int op = Terminal.get_stay_online_answer();
+            switch (op) {
+                case 1:
+                    System.out.println("Entendido, estás conectado\n");
+                    return connection;
+                case 0:
+                    System.out.println("Deberas acceder posteriormente! Cerrando sesión temporal\n");
+                    connection.disconnect();
+                default:
+                    System.out.println("Ha ocurrido un error con la opción seleccionada!");
+                    break;
+            }
 
-            return result;
+            return null;
+
         } catch (SmackException | IOException | XMPPException | InterruptedException e) {
-            result = "ERROR";
-            return result;
+            return null;
         }
     }
 

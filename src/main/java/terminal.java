@@ -107,7 +107,7 @@ public class Terminal {
         int opc = 0;
         System.out.print("Deseas eliminar esta cuenta del servidor (y/n)");
         String opca = scan.nextLine();
-        switch (opca) {
+        switch (opca.toLowerCase()) {
             case "y":
                 opc = 1;
                 break;
@@ -120,6 +120,25 @@ public class Terminal {
                 break;
         }
         return opc;
+    }
+
+    public int get_stay_online_answer(){
+        int ans = 0;
+        System.out.print("Deseas ingresar inmediatamente y quedarte conectado/a? (y/n)");
+        String ansU = scan.nextLine();
+        switch (ansU.toLowerCase()) {
+            case "y":
+                ans = 1;
+                break;
+            case "n":
+                ans = 0;
+                break;
+            default:
+                System.out.println("Opcion invalida");
+                ans = 2;
+                break;
+        }
+        return ans;
     }
 
     public static String toString(char[] a)
