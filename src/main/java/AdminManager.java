@@ -7,6 +7,7 @@ import org.jivesoftware.smack.ConnectionConfiguration.SecurityMode;
 import org.jivesoftware.smack.SmackException.NoResponseException;
 import org.jivesoftware.smack.SmackException.NotConnectedException;
 import org.jivesoftware.smack.XMPPException.XMPPErrorException;
+import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
 import org.jivesoftware.smackx.iqregister.AccountManager;
@@ -33,35 +34,28 @@ public class AdminManager{
         return config;
     }
 
-    public AbstractXMPPConnection Register(String username, String password) throws XmppStringprepException{
+    public void Register(String username, String password) throws XmppStringprepException{
         
         XMPPTCPConnectionConfiguration config = get_config(username, password);
-
         AbstractXMPPConnection connection = new XMPPTCPConnection(config);
+
         try {
             connection.connect();
  
             AccountManager accManager = AccountManager.getInstance(connection);
             accManager.sensitiveOperationOverInsecureConnection(true);
             accManager.createAccount(Localpart.from(username), password);
+            connection.login();
             
-            int op = Terminal.get_stay_online_answer();
-            switch (op) {
-                case 1:
-                    System.out.println("Entendido, estás conectado\n");
-                    return connection;
-                case 0:
-                    System.out.println("Deberas acceder posteriormente! Cerrando sesión temporal\n");
-                    connection.disconnect();
-                default:
-                    System.out.println("Ha ocurrido un error con la opción seleccionada!");
-                    break;
-            }
+            Roster roster = Roster.getInstanceFor(connection);
+            roster.reload();
 
-            return null;
+            connection.disconnect();
+            System.out.println("Cuenta creada exitosamente!!!");
 
         } catch (SmackException | IOException | XMPPException | InterruptedException e) {
-            return null;
+            System.out.println(e);
+            System.out.println("Ha ocurrido un error, intenta m\u00E1s tarde");
         }
     }
 
