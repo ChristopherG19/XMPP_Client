@@ -1,3 +1,10 @@
+/*
+    Universidad del Valle de Guatemala
+    Redes de Computadora
+    Christopher García 20541
+    Proyecto#1: Cliente XMPP
+*/
+
 import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jxmpp.stringprep.XmppStringprepException;
 import java.util.List;
