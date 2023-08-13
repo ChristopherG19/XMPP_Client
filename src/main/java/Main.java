@@ -15,6 +15,7 @@ public class Main {
 
         Terminal Terminal = new Terminal();
         AdminManager AM = new AdminManager();
+        UserManager UM  = new UserManager();
 
         int adminOption = 0;
         AbstractXMPPConnection actualSession = null;
@@ -39,6 +40,9 @@ public class Main {
                         System.out.println("Bienvenido!!!");
                         int userP = Terminal.userMenu(valuesU.get(0));
                         switch (userP) {
+                            case 1:
+                                UM.getAllContacts(actualSession);
+                                break;
                             case 9:
                                 actualSession = AM.CloseSession(actualSession);
                                 break;
@@ -75,7 +79,7 @@ public class Main {
                     break;
 
                 case 5:
-                    System.out.println("Opci\u00F3n 5");
+                    System.out.println("\n");
                     break;
             
                 default:
