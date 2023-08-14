@@ -43,10 +43,10 @@ public class Terminal {
     public int userMenu(String username){
         int option = 0;
 
-        System.out.println("\n----- Chat Redes -----");
+        System.out.println("\n----------- Chat Redes -----------");
         String welcome = String.format("Usuario conectado: %s", username);
         System.out.println(welcome);
-        System.out.println("-----------------------");
+        System.out.println("--------------------------------");
         System.out.println("\nOpciones disponibles: ");
         System.out.println("1) Mostrar todos los contactos y su estado");
         System.out.println("2) Agregar un usuario a los contactos");
@@ -145,6 +145,53 @@ public class Terminal {
                 break;
         }
         return ans;
+    }
+
+    public String get_contact_info(){
+        String user = "";
+        boolean isValid = false;
+        while(!isValid){
+            System.out.print("Usuario del contacto: ");
+            user = scan.nextLine();
+            if(!user.equals("") || !user.equals(" ")){
+                if(user.equals("exit")){
+                    isValid = true;
+                    user = null;
+                }
+                isValid = true;
+            } else {
+                System.out.println("\nIngresa un usuario v\u00E1lido, prueba de nuevo o escribe exit si deseas salir\n");
+            }
+        }
+        return user;
+    }
+
+    public String get_new_status(){
+        String status = "";
+        boolean confirm = false;
+        while(!confirm){
+            System.out.print("Ingresa tu mensaje de presencia: ");
+            status = scan.nextLine();
+            boolean confirmB = false;
+            while(!confirmB){
+                System.out.print("Est\u00E1s seguro? (y/n): ");
+                String op = scan.nextLine();
+                switch (op.toLowerCase()) {
+                    case "y":
+                        confirmB = true;
+                        confirm = true;
+                        break;
+                    case "n":
+                        confirmB = true;
+                        break;
+                    default:
+                        System.out.println("Ingresa una opción válida\n");
+                        break;
+                }
+            }
+        }
+        
+        return status;
     }
 
     public static String toString(char[] a)

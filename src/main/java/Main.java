@@ -6,12 +6,14 @@
 */
 
 import org.jivesoftware.smack.AbstractXMPPConnection;
+import org.jivesoftware.smack.SmackException.NotConnectedException;
+import org.jivesoftware.smack.SmackException.NotLoggedInException;
 import org.jxmpp.stringprep.XmppStringprepException;
 import java.util.List;
 
 public class Main {
 
-    public static void main(String[] args) throws XmppStringprepException {
+    public static void main(String[] args) throws XmppStringprepException, NotLoggedInException, NotConnectedException, InterruptedException {
 
         Terminal Terminal = new Terminal();
         AdminManager AM = new AdminManager();
@@ -38,17 +40,53 @@ public class Main {
                         System.out.println("O tu cuenta no existe en el servidor");
                     } else {
                         System.out.println("Bienvenido!!!");
-                        int userP = Terminal.userMenu(valuesU.get(0));
-                        switch (userP) {
-                            case 1:
-                                UM.getAllContacts(actualSession);
-                                break;
-                            case 9:
-                                actualSession = AM.CloseSession(actualSession);
-                                break;
-                        
-                            default:
-                                break;
+
+                        String username = "";
+
+                        boolean exit = false;
+                        while(!exit){
+                            int userP = Terminal.userMenu(valuesU.get(0));
+                            switch (userP) {
+                                case 1:
+                                    UM.getAllContacts(actualSession);
+                                    break;
+                                case 2:
+                                    username = Terminal.get_contact_info();
+                                    if (username == null){
+                                        System.out.println("Entendido, saliendo de esta opci\u00F3n...\n");
+                                        break;
+                                    } else {
+                                        String JID = username+"@alumchat.xyz";
+                                        UM.addContact(actualSession, JID, username);
+                                    }
+                                    break;
+                                case 3:
+                                    username = Terminal.get_contact_info();
+                                    if (username == null){
+                                        System.out.println("Entendido, saliendo de esta opci\u00F3n...\n");
+                                        break;
+                                    } else {
+                                        String JID = username+"@alumchat.xyz";
+                                        String response = UM.getUserDetails(actualSession, JID);
+                                        System.out.println("\n----------------------------------------------------");
+                                        System.out.println(response);
+                                        System.out.println("----------------------------------------------------");
+                                    }
+                                    break;
+
+                                case 6:
+                                    String status = Terminal.get_new_status();
+                                    UM.updateUserStatus(actualSession, status);
+                                    break;
+
+                                case 9:
+                                    actualSession = AM.CloseSession(actualSession);
+                                    exit = true;
+                                    break;
+                            
+                                default:
+                                    break;
+                            }
                         }
                     }
                     break;
@@ -79,7 +117,6 @@ public class Main {
                     break;
 
                 case 5:
-                    System.out.println("\n");
                     break;
             
                 default:
