@@ -63,30 +63,37 @@ public class UserManager {
     public String getUserDetails(AbstractXMPPConnection connection, String userJID) throws XmppStringprepException, NotLoggedInException, NotConnectedException, InterruptedException {
         String userStatus;
         Roster roster = Roster.getInstanceFor(connection);
-        roster.reloadAndWait();
         RosterEntry entry = roster.getEntry(JidCreate.entityBareFrom(userJID));
-        Presence presence = roster.getPresence(entry.getJid());
-        if (!presence.isAvailable()) {
-            userStatus = "No disponible";
-        } else if (presence.getType() == Presence.Type.available) {
-            if (presence.getMode() == Presence.Mode.available) {
-                userStatus = "Disponible";
-            } else if (presence.getMode() == Presence.Mode.away) {
-                userStatus = "Ausente";
-            } else if (presence.getMode() == Presence.Mode.dnd) {
-                userStatus = "Ocupado";
-            } else {
+        if(entry != null){
+            Presence presence = roster.getPresence(entry.getJid());
+            if (!presence.isAvailable()) {
                 userStatus = "No disponible";
+            } else if (presence.getType() == Presence.Type.available) {
+                if (presence.getMode() == Presence.Mode.available) {
+                    userStatus = "Disponible";
+                } else if (presence.getMode() == Presence.Mode.away) {
+                    userStatus = "Ausente";
+                } else if (presence.getMode() == Presence.Mode.dnd) {
+                    userStatus = "Ocupado";
+                } else {
+                    userStatus = "No disponible";
+                }
+            } else {
+                userStatus = "Desconectado";
             }
-        } else {
-            userStatus = "Desconectado";
-        }
 
-        String seeMy = entry.canSeeMyPresence() ? "Si" : "No";
-        String seeHis = entry.canSeeHisPresence() ? "Si" : "No";
-        String status = (presence.getStatus() == null) ? "Sin estado" : presence.getStatus();
- 
-        return "Informaci\u00F3n del usuario: " + entry.getJid().toString() + "\nEstado: " +  userStatus + "\nUsername: " + entry.getName() + "\nStatus: " + status +"\nPuede ver mi presencia: " + seeMy + "\nPuedo ver su presencia: " + seeHis;
+            String seeMy = entry.canSeeMyPresence() ? "Si" : "No";
+            String seeHis = entry.canSeeHisPresence() ? "Si" : "No";
+            String status = (presence.getStatus() == null) ? "Sin estado" : presence.getStatus();
+    
+            return "Informaci\u00F3n del usuario: " + entry.getJid().toString() + "\nEstado: " +  userStatus + "\nUsername: " + entry.getName() + "\nStatus: " + status +"\nPuede ver mi presencia: " + seeMy + "\nPuedo ver su presencia: " + seeHis;
+        } else {
+            return "Informaci\u00F3n del usuario: " + connection.getUser().asBareJid().toString();
+        }
+    }
+
+    public void manageChat(AbstractXMPPConnection connection){
+
     }
 
     public void updateUserStatus(AbstractXMPPConnection connection, String status) {
