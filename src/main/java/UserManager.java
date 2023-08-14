@@ -31,7 +31,7 @@ public class UserManager {
  
             String userStatus;
             if (!presence.isAvailable()) {
-                userStatus = "No disponible";
+                userStatus = "Desconectado";
             } else if (presence.getType() == Presence.Type.available) {
                 if (presence.getMode() == Presence.Mode.available) {
                     userStatus = "Disponible";
@@ -40,10 +40,10 @@ public class UserManager {
                 } else if (presence.getMode() == Presence.Mode.dnd) {
                     userStatus = "Ocupado";
                 } else {
-                    userStatus = "Desconectado";
+                    userStatus = "No disponible";
                 }
             } else {
-                userStatus = "Desconectado";
+                userStatus = "No disponible";
             }
  
             System.out.println("Usuario: " + entry.getJid() + ", Estado: " + userStatus);
