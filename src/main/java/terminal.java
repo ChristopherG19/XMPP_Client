@@ -46,7 +46,7 @@ public class Terminal {
         System.out.println("\n----------- Chat Redes -----------");
         String welcome = String.format("Usuario conectado: %s", username);
         System.out.println(welcome);
-        System.out.println("--------------------------------");
+        System.out.println("----------------------------------");
         System.out.println("\nOpciones disponibles: ");
         System.out.println("1) Mostrar todos los contactos y su estado");
         System.out.println("2) Agregar un usuario a los contactos");
@@ -192,6 +192,46 @@ public class Terminal {
         }
         
         return status;
+    }
+
+    public int get_type_chat(){
+        int res = 0;
+        boolean isValid = false;
+
+        while(!isValid){
+            System.out.println("Opciones disponibles\n");
+            System.out.println("1) Chat con contactos");
+            System.out.println("2) Chat con nuevo usuario");
+            System.out.println("3) Salir");
+            System.out.print("¿Que deseas hacer?: ");
+            try {
+                res = scan.nextInt();
+                isValid = true;
+            } catch (Exception e) {
+                System.out.println("Ingresa valores numéricos!!!\n");
+            }
+        }
+        return res;
+    }
+
+    public int get_user_chat(){
+        int us = 0;
+        boolean isValid = false;
+        while(!isValid){
+            System.out.print("Ingresa el número de contacto para iniciar conversación: ");
+            try {
+                us = scan.nextInt();
+                isValid = true;
+            } catch (Exception e) {
+                System.out.println("Ingresa valores numéricos!!!\n");
+            }
+        }
+        return us;
+    }
+
+    public String get_message_to_Send(){
+        String res = scan.nextLine();
+        return res;
     }
 
     public static String toString(char[] a)

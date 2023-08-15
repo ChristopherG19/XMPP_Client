@@ -6,6 +6,7 @@
 */
 
 import org.jivesoftware.smack.AbstractXMPPConnection;
+import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.SmackException.NotConnectedException;
 import org.jivesoftware.smack.SmackException.NotLoggedInException;
 import org.jxmpp.stringprep.XmppStringprepException;
@@ -13,7 +14,7 @@ import java.util.List;
 
 public class Main {
 
-    public static void main(String[] args) throws XmppStringprepException, NotLoggedInException, NotConnectedException, InterruptedException {
+    public static void main(String[] args) throws XmppStringprepException, NotLoggedInException, NotConnectedException, InterruptedException, XMPPException {
 
         Terminal Terminal = new Terminal();
         AdminManager AM = new AdminManager();
@@ -68,10 +69,12 @@ public class Main {
                                     } else {
                                         String JID = username+"@alumchat.xyz";
                                         String response = UM.getUserDetails(actualSession, JID);
-                                        System.out.println("\n----------------------------------------------------");
                                         System.out.println(response);
-                                        System.out.println("----------------------------------------------------");
                                     }
+                                    break;
+
+                                case 4:
+                                    UM.manageChat(actualSession);
                                     break;
 
                                 case 6:
