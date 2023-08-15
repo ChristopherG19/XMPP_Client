@@ -22,6 +22,7 @@ public class Main {
 
         int adminOption = 0;
         AbstractXMPPConnection actualSession = null;
+        NotificationsListener notificationListener = null;
         while (adminOption != 5){
             adminOption = Terminal.adminMenu();
         
@@ -41,6 +42,9 @@ public class Main {
                         System.out.println("O tu cuenta no existe en el servidor");
                     } else {
                         System.out.println("Bienvenido!!!");
+
+                        notificationListener = new NotificationsListener(actualSession, UM);
+                        notificationListener.start();
 
                         String username = "";
 
@@ -82,8 +86,14 @@ public class Main {
                                     UM.updateUserStatus(actualSession, status);
                                     break;
 
+                                case 7:
+                                    List<NotificationP> notis = UM.getPendingNotifications();
+                                    Terminal.print_notis(notis);
+                                    break;
+                                    
                                 case 9:
                                     actualSession = AM.CloseSession(actualSession);
+                                    notificationListener.stopRunning();
                                     exit = true;
                                     break;
                             

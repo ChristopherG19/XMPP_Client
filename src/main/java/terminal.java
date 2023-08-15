@@ -54,7 +54,7 @@ public class Terminal {
         System.out.println("4) Comunicación 1 a 1 con cualquier usuario/contacto");
         System.out.println("5) Participar en conversaciones grupales");
         System.out.println("6) Definir mensaje de presencia");
-        System.out.println("7) Enviar/recibir notificaciones");
+        System.out.println("7) Notificaciones");
         System.out.println("8) Enviar/recibir archivos");
         System.out.println("9) Cerrar sesi\u00F3n");
         System.out.print("\nIngrese una opci\u00F3n: ");
@@ -230,8 +230,21 @@ public class Terminal {
     }
 
     public String get_message_to_Send(){
+        System.out.print("> ");
         String res = scan.nextLine();
         return res;
+    }
+
+    public void print_notis(List<NotificationP> notis){
+        System.out.println("Notifications:");
+        System.out.println("----------------------------------------------------------");
+        System.out.printf("%-20s %-50s%n", "Sender", "Content");
+        System.out.println("----------------------------------------------------------");
+
+        for (NotificationP notification : notis) {
+            System.out.println(notification);
+            //System.out.printf("%-20s %-50s%n", notification.getSender(), notification.getContent());
+        }
     }
 
     public static String toString(char[] a)

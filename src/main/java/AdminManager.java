@@ -35,6 +35,7 @@ public class AdminManager{
                 .setUsernameAndPassword(username,password)
                 .setXmppDomain(xmppDomain)
                 .setHost(xmppDomainString)
+                .setSendPresence(true)
                 .setSecurityMode(SecurityMode.disabled)
                 .build();
 
