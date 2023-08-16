@@ -4,6 +4,7 @@ import org.jivesoftware.smack.filter.StanzaFilter;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.Stanza;
+import org.jivesoftware.smack.roster.Roster;
 
 public class NotificationsListener extends Thread {
 
@@ -22,6 +23,14 @@ public class NotificationsListener extends Thread {
     }
 
     public void run() {
+        Roster roster = Roster.getInstanceFor(connection);
+        roster.setSubscriptionMode(Roster.SubscriptionMode.accept_all);
+        roster.addSubscribeListener((from, suscribeRequest) -> {
+            NotificationP notification = new NotificationP(from.toString(), suscribeRequest.getType().toString());
+            userManager.addPendingNotification(notification);
+            return null;
+        });
+        
         try {
             // Filtro para capturar todas las notificaciones
             StanzaFilter notificationFilter = new StanzaFilter() {
@@ -33,15 +42,7 @@ public class NotificationsListener extends Thread {
             StanzaListener notificationListener = new StanzaListener() {
                 @Override
                 public void processStanza(Stanza stanza) {
-                    if (stanza instanceof Presence) {
-                        Presence presence = (Presence) stanza;
-                        NotificationP notification = new NotificationP(presence.getFrom().toString(), presence.getStatus());
-                        userManager.addPendingNotification(notification);
-                    } else if (stanza instanceof Message) {
-                        Message message = (Message) stanza;
-                        NotificationP notification = new NotificationP(message.getFrom().toString(), message.getBody());
-                        userManager.addPendingNotification(notification);
-                    }
+                    System.out.print("");
                 }
             };
 

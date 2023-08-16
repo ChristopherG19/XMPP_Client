@@ -214,23 +214,29 @@ public class Terminal {
         return res;
     }
 
-    public int get_user_chat(){
+    public int get_user_chat() {
         int us = 0;
         boolean isValid = false;
-        while(!isValid){
-            System.out.print("Ingresa el número de contacto para iniciar conversación: ");
+        while (!isValid) {
+            System.out.print("Ingresa el número de contacto para iniciar conversación (0 para salir): ");
             try {
-                us = scan.nextInt();
-                isValid = true;
+                if (scan.hasNextInt()) {
+                    us = scan.nextInt();
+                    isValid = true;
+                } else {
+                    System.out.println("Ingresa valores numéricos!!!\n");
+                    scan.next();
+                }
             } catch (Exception e) {
-                System.out.println("Ingresa valores numéricos!!!\n");
+                System.out.println("Hubo un error en la entrada. Ingresa valores numéricos!!!\n");
+                scan.next();
             }
         }
         return us;
     }
 
     public String get_message_to_Send(){
-        System.out.print("> ");
+        System.out.print(">> ");
         String res = scan.nextLine();
         return res;
     }
@@ -242,8 +248,7 @@ public class Terminal {
         System.out.println("----------------------------------------------------------");
 
         for (NotificationP notification : notis) {
-            System.out.println(notification);
-            //System.out.printf("%-20s %-50s%n", notification.getSender(), notification.getContent());
+            System.out.printf("%-20s %-50s%n", notification.getSender(), notification.getContent());
         }
     }
 

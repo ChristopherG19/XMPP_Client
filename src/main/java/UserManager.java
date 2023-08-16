@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.SmackException;
@@ -110,7 +111,6 @@ public class UserManager {
     
     public void manageChat(AbstractXMPPConnection connection) throws XMPPException, XmppStringprepException{
         ChatManager chatManager = ChatManager.getInstanceFor(connection);
-        chatManager.addIncomingListener(new MessageListener());
         Roster roster = Roster.getInstanceFor(connection);
 
         int res = Terminal.get_type_chat();
@@ -118,17 +118,26 @@ public class UserManager {
             case 1:
                 System.out.println("\nEstos contactos están disponibles...\n");
                 Map<Integer, RosterEntry> availableContacts = getAvailableContacts(connection);
-                for (Map.Entry<Integer, RosterEntry> entry : availableContacts.entrySet()) {
-                    RosterEntry rosterEntry = entry.getValue();
-                    Presence presence = roster.getPresence(rosterEntry.getJid());
-                    String presenceStatus = get_presence_type(presence);
+                if(availableContacts.size() > 0){
+                    for (Map.Entry<Integer, RosterEntry> entry : availableContacts.entrySet()) {
+                        RosterEntry rosterEntry = entry.getValue();
+                        Presence presence = roster.getPresence(rosterEntry.getJid());
+                        String presenceStatus = get_presence_type(presence);
 
-                    System.out.println(entry.getKey() + ") " + " Usuario: " + rosterEntry.getJid() + " | Estado: " + presenceStatus);
+                        System.out.println(entry.getKey() + ") " + " Usuario: " + rosterEntry.getJid() + " | Estado: " + presenceStatus);
+                    }
+                    int us = Terminal.get_user_chat();
+                    if(us != 0){
+                        RosterEntry selectedUser = getContactAtPosition(availableContacts, us);
+                        startChatWithContact(chatManager, selectedUser);
+                    } else {
+                        System.out.println("Cancelando operación...");
+                        break;
+                    }
+                } else {
+                    System.out.println("No hay contactos disponibles");
+                    break;
                 }
-                System.out.println("\n");
-                int us = Terminal.get_user_chat();
-                RosterEntry selectedUser = getContactAtPosition(availableContacts, us);
-                startChatWithContact(chatManager, selectedUser);
                 break;
        
             case 2:
@@ -149,6 +158,9 @@ public class UserManager {
     private void startChatWithContact(ChatManager chatManager, RosterEntry contact) throws XMPPException {
         String contactJID = contact.getJid().toString();
         Chat chat = chatManager.chatWith(contact.getJid().asEntityBareJidIfPossible());
+        AtomicBoolean chatActive = new AtomicBoolean(true);
+        chatManager.addIncomingListener(new MessageListener(chatActive));
+        chatManager.addOutgoingListener(new MessageListener(chatActive));
 
         System.out.println("Chat con " + contactJID + " inició. Escribe 'exit' para terminar la conversación.");
 
@@ -162,6 +174,8 @@ public class UserManager {
             } while (!input.equalsIgnoreCase("exit"));
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            chatActive.set(false);
         }
 
         System.out.println("\nChat con " + contactJID + " finalizado.");
