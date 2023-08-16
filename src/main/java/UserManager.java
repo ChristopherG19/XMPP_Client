@@ -58,8 +58,9 @@ public class UserManager {
             Presence presence = roster.getPresence(entry.getJid());
             String userStatus = get_presence_type(presence);
             String status = (presence.getStatus() == null) ? "Sin estado" : presence.getStatus();
-    
-            System.out.printf("| %-15s | %-24s | %-15s | %-21s |\n", entry.getName(), entry.getJid(), userStatus, status);
+            String name = (entry.getName() == null) ? entry.getJid().toString().substring(0, entry.getJid().toString().indexOf("@")) : entry.getName();
+
+            System.out.printf("| %-15s | %-24s | %-15s | %-21s |\n", name, entry.getJid(), userStatus, status);
             System.out.println("+-----------------+--------------------------+-----------------+-----------------------+");
         }
     }    
@@ -129,7 +130,8 @@ public class UserManager {
                     int us = Terminal.get_user_chat();
                     if(us != 0){
                         RosterEntry selectedUser = getContactAtPosition(availableContacts, us);
-                        startChatWithContact(chatManager, selectedUser);
+                        String userJIDE = selectedUser.getJid().asBareJid().toString();
+                        startChatWithContact(chatManager, userJIDE);
                     } else {
                         System.out.println("Cancelando operación...");
                         break;
@@ -141,12 +143,15 @@ public class UserManager {
                 break;
        
             case 2:
-                String user = Terminal.get_contact_info();
-                String userJID = user + "@alumchat.xyz";
-                RosterEntry rosterEntry  = roster.getEntry(JidCreate.entityBareFrom(userJID));
-                startChatWithContact(chatManager, rosterEntry);
-                break;
-
+                String userN = Terminal.get_contact_info();
+                if(!(userN == null)){
+                    String userJID = userN + "@alumchat.xyz";
+                    startChatWithContact(chatManager, userJID);
+                    break;
+                } else {
+                    System.out.println("Cancelando operación...");
+                    break;
+                }
             default:
                 System.out.println("Ingresa una opción válida!");
                 break;
@@ -155,14 +160,13 @@ public class UserManager {
 
     }
 
-    private void startChatWithContact(ChatManager chatManager, RosterEntry contact) throws XMPPException {
-        String contactJID = contact.getJid().toString();
-        Chat chat = chatManager.chatWith(contact.getJid().asEntityBareJidIfPossible());
+    private void startChatWithContact(ChatManager chatManager, String contact) throws XMPPException, XmppStringprepException {
+        Chat chat = chatManager.chatWith(JidCreate.entityBareFrom(contact));
         AtomicBoolean chatActive = new AtomicBoolean(true);
         chatManager.addIncomingListener(new MessageListener(chatActive));
         chatManager.addOutgoingListener(new MessageListener(chatActive));
 
-        System.out.println("Chat con " + contactJID + " inició. Escribe 'exit' para terminar la conversación.");
+        System.out.println("Chat con " + contact + " inició. Escribe 'exit' para terminar la conversación.");
 
         try {
             String input;
@@ -178,7 +182,7 @@ public class UserManager {
             chatActive.set(false);
         }
 
-        System.out.println("\nChat con " + contactJID + " finalizado.");
+        System.out.println("\nChat con " + contact + " finalizado.");
     }
 
     private Map<Integer, RosterEntry> getAvailableContacts(AbstractXMPPConnection connection) {

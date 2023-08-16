@@ -111,7 +111,7 @@ public class Terminal {
 
     public int get_close_session_answer(){
         int opc = 0;
-        System.out.print("Deseas eliminar esta cuenta del servidor (y/n)");
+        System.out.print("Deseas eliminar esta cuenta del servidor (y/n): ");
         String opca = scan.nextLine();
         switch (opca.toLowerCase()) {
             case "y":
@@ -147,22 +147,24 @@ public class Terminal {
         return ans;
     }
 
-    public String get_contact_info(){
+    public String get_contact_info() {
         String user = "";
         boolean isValid = false;
-        while(!isValid){
+        
+        while (!isValid) {
             System.out.print("Usuario del contacto: ");
             user = scan.nextLine();
-            if(!user.equals("") || !user.equals(" ")){
-                if(user.equals("exit")){
-                    isValid = true;
+            
+            if (!user.trim().isEmpty()) {
+                if (user.equals("exit")) {
                     user = null;
                 }
                 isValid = true;
             } else {
-                System.out.println("\nIngresa un usuario v\u00E1lido, prueba de nuevo o escribe exit si deseas salir\n");
+                System.out.println("\nPrueba de nuevo o escribe exit si deseas salir\n");
             }
         }
+        
         return user;
     }
 
@@ -243,12 +245,10 @@ public class Terminal {
 
     public void print_notis(List<NotificationP> notis){
         System.out.println("Notifications:");
-        System.out.println("----------------------------------------------------------");
-        System.out.printf("%-20s %-50s%n", "Sender", "Content");
-        System.out.println("----------------------------------------------------------");
-
         for (NotificationP notification : notis) {
-            System.out.printf("%-20s %-50s%n", notification.getSender(), notification.getContent());
+            System.out.println("----------------------------------------------------------");
+            System.out.println(notification);
+            System.out.println("----------------------------------------------------------");
         }
     }
 

@@ -1,6 +1,6 @@
 import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.StanzaListener;
-import org.jivesoftware.smack.filter.StanzaFilter;
+import org.jivesoftware.smack.SmackException.NotConnectedException;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.Stanza;
@@ -25,29 +25,43 @@ public class NotificationsListener extends Thread {
     public void run() {
         Roster roster = Roster.getInstanceFor(connection);
         roster.setSubscriptionMode(Roster.SubscriptionMode.accept_all);
-        roster.addSubscribeListener((from, suscribeRequest) -> {
-            NotificationP notification = new NotificationP(from.toString(), suscribeRequest.getType().toString());
+        roster.addSubscribeListener((from, subscribeRequest) -> {
+            NotificationP notification = new NotificationP(from.toString(), subscribeRequest.getType().toString());
             userManager.addPendingNotification(notification);
+            Presence subscribedPresence = new Presence(Presence.Type.subscribed);
+            subscribedPresence.setTo(from);
+            try {
+                connection.sendStanza(subscribedPresence);
+            } catch (NotConnectedException | InterruptedException e) {
+                e.printStackTrace();
+            }
             return null;
         });
-        
+
         try {
             // Filtro para capturar todas las notificaciones
-            StanzaFilter notificationFilter = new StanzaFilter() {
-                @Override
-                public boolean accept(Stanza stanza) {
-                    return stanza instanceof Presence || stanza instanceof Message;
-                }
-            };
             StanzaListener notificationListener = new StanzaListener() {
                 @Override
                 public void processStanza(Stanza stanza) {
-                    System.out.print("");
+                    if (stanza instanceof Presence) {
+                        Presence presence = (Presence) stanza;
+                        boolean ver = connection.getUser().asBareJid().toString().equals(presence.getFrom().asBareJid().toString());
+                        if(!ver){
+                            NotificationP notification = new NotificationP(presence.getFrom().asBareJid().toString(), presence.getType().toString());
+                            userManager.addPendingNotification(notification);
+                        }
+                    } else if (stanza instanceof Message) {
+                        Message message = (Message) stanza;
+                        NotificationP notification = new NotificationP(message.getFrom().asBareJid().toString(), message.getBody());
+                        userManager.addPendingNotification(notification);
+                    }
                 }
             };
 
+
+
             // Agregar el filtro y el oyente al connection
-            connection.addAsyncStanzaListener(notificationListener, notificationFilter);
+            connection.addAsyncStanzaListener(notificationListener, null);
 
             // Keep the thread alive to continue listening for notifications
             while (isRunning) {
