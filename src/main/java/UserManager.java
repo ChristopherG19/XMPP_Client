@@ -13,15 +13,21 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.SmackException;
+import org.jivesoftware.smack.SmackException.NoResponseException;
 import org.jivesoftware.smack.SmackException.NotConnectedException;
 import org.jivesoftware.smack.SmackException.NotLoggedInException;
+import org.jivesoftware.smack.XMPPException.XMPPErrorException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.chat2.Chat;
 import org.jivesoftware.smack.chat2.ChatManager;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.roster.RosterEntry;
+import org.jivesoftware.smackx.muc.MultiUserChat;
+import org.jivesoftware.smackx.muc.MultiUserChatManager;
+import org.jivesoftware.smackx.muc.MultiUserChatException.NotAMucServiceException;
 import org.jxmpp.jid.impl.JidCreate;
+import org.jxmpp.jid.parts.Resourcepart;
 import org.jxmpp.stringprep.XmppStringprepException;
 
 public class UserManager {
@@ -163,8 +169,8 @@ public class UserManager {
     private void startChatWithContact(ChatManager chatManager, String contact) throws XMPPException, XmppStringprepException {
         Chat chat = chatManager.chatWith(JidCreate.entityBareFrom(contact));
         AtomicBoolean chatActive = new AtomicBoolean(true);
-        chatManager.addIncomingListener(new MessageListener(chatActive));
-        chatManager.addOutgoingListener(new MessageListener(chatActive));
+        chatManager.addIncomingListener(new MessagesListener(chatActive));
+        chatManager.addOutgoingListener(new MessagesListener(chatActive));
 
         System.out.println("Chat con " + contact + " inició. Escribe 'exit' para terminar la conversación.");
 
@@ -218,6 +224,68 @@ public class UserManager {
         } catch (SmackException.NotConnectedException | InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    public void manageGroupChat(AbstractXMPPConnection connection) throws XmppStringprepException, NotAMucServiceException, NoResponseException, XMPPErrorException, NotConnectedException, InterruptedException{
+        int type_gc = Terminal.get_type_groupChat();
+        AtomicBoolean chatActive = new AtomicBoolean(true);
+        switch (type_gc) {
+            case 0:
+                System.out.println("Cancelando operación...");
+                break;
+            case 1:
+                // Join
+                System.out.println("Necesito que ingreses un par de datos");
+                String props = Terminal.get_GC_join_props();
+                String[] parts = props.split("\\$");
+    
+                String groupName = parts[0];
+                String username = parts[1];
+
+                String JIDGroup = groupName + "@conference.alumchat.xyz";
+                
+                MultiUserChatManager groups = MultiUserChatManager.getInstanceFor(connection);
+                MultiUserChat muc = groups.getMultiUserChat(JidCreate.entityBareFrom(JIDGroup));
+                Resourcepart nickname = Resourcepart.from(username);
+                muc.join(nickname);
+
+                muc.addMessageListener(new MessagesListener(chatActive));
+                muc.addParticipantStatusListener(new ParticipantsListener());
+                muc.addUserStatusListener(new ParticipantsListener());
+
+                try {
+                    String input;
+                    do {
+                        input = Terminal.get_message_to_Send();
+                        if (!input.equalsIgnoreCase("exit")){
+                            muc.sendMessage(input);
+                        }
+                    } while (!input.equalsIgnoreCase("exit"));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    chatActive.set(false);
+                }
+
+                break;
+
+            case 2:
+                // Create
+                System.out.println("Necesito que ingreses un par de datos");
+                break;
+        
+            default:
+                System.out.println("Ingresa una opción válida!");
+                break;
+        }
+    }
+
+    public void joinGroupChat(AbstractXMPPConnection connection, String roomName, String nickName){
+
+    }
+
+    public void createGroupChat(AbstractXMPPConnection connection, String roomGroup){
+
     }
 
     public String get_presence_type(Presence presence){

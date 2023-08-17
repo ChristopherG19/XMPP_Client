@@ -237,6 +237,30 @@ public class Terminal {
         return us;
     }
 
+    public int get_type_groupChat(){
+        int us = 0;
+        boolean isValid = false;
+        while (!isValid) {
+            System.out.println("Conversaciones grupales");
+            System.out.println("1) Ingresar a conversación");
+            System.out.println("2) Crear grupo");
+            System.out.print("Ingresa una opción (0 para salir): ");
+            try {
+                if (scan.hasNextInt()) {
+                    us = scan.nextInt();
+                    isValid = true;
+                } else {
+                    System.out.println("Ingresa valores numéricos!!!\n");
+                    scan.next();
+                }
+            } catch (Exception e) {
+                System.out.println("Hubo un error en la entrada. Ingresa valores numéricos!!!\n");
+                scan.next();
+            }
+        }
+        return us;
+    }
+
     public String get_message_to_Send(){
         System.out.print(">> ");
         String res = scan.nextLine();
@@ -250,6 +274,40 @@ public class Terminal {
             System.out.println(notification);
             System.out.println("----------------------------------------------------------");
         }
+    }
+
+    public String get_GC_join_props() {
+        Scanner scanner = new Scanner(System.in);
+        String groupName = getValidInput(scanner, "Enter the group name: ");
+        String username = getValidInput(scanner, "Enter the username: ");
+
+        return groupName + "$" + username;
+    }
+
+    private String getValidInput(Scanner scanner, String prompt) {
+        String input = "";
+
+        Boolean valid = false;
+        while (!valid) {
+            System.out.print(prompt);
+            input = scanner.nextLine().trim();
+            
+            if (!input.isEmpty()) {
+                System.out.print("Confirm that " + input + " is correct? (y/n): ");
+                String confirmation = scanner.nextLine().toLowerCase();
+                
+                if (confirmation.equals("y")) {
+                    valid = true;
+                } else if (confirmation.equals("n")) {
+                    continue;
+                }
+            } else {
+                System.out.println("Invalid input. Please try again.");
+            }
+            
+        }
+
+        return input;
     }
 
     public static String toString(char[] a)

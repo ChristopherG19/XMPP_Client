@@ -7,14 +7,18 @@
 
 import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.SmackException.NoResponseException;
 import org.jivesoftware.smack.SmackException.NotConnectedException;
 import org.jivesoftware.smack.SmackException.NotLoggedInException;
+import org.jivesoftware.smackx.muc.MultiUserChatException.NotAMucServiceException;
 import org.jxmpp.stringprep.XmppStringprepException;
 import java.util.List;
 
+// Principal Reference: https://www.baeldung.com/xmpp-smack-chat-client
+
 public class Main {
 
-    public static void main(String[] args) throws XmppStringprepException, NotLoggedInException, NotConnectedException, InterruptedException, XMPPException {
+    public static void main(String[] args) throws XmppStringprepException, NotLoggedInException, NotConnectedException, InterruptedException, XMPPException, NotAMucServiceException, NoResponseException {
 
         Terminal Terminal = new Terminal();
         AdminManager AM = new AdminManager();
@@ -79,6 +83,10 @@ public class Main {
 
                                 case 4:
                                     UM.manageChat(actualSession);
+                                    break;
+
+                                case 5:
+                                    UM.manageGroupChat(actualSession);
                                     break;
 
                                 case 6:
