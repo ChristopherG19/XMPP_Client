@@ -24,14 +24,14 @@ public class MessagesListener implements IncomingChatMessageListener, OutgoingCh
     @Override
     public void newIncomingMessage(EntityBareJid from, Message message, Chat chat) {
         if (chatActive.get()) {
-            System.out.println("\n>> (" + from + "): " + message.getBody() + "\n");
+            System.out.println("\n>> (" + from + "): " + message.getBody());
         }
     }
 
     @Override
     public void newOutgoingMessage(EntityBareJid to, Message message, Chat chat) {
         if (chatActive.get()) {
-            System.out.println("\n>> (You): " + message.getBody() + "\n");
+            System.out.println("\n>> (You): " + message.getBody());
         }
     }
 
@@ -40,7 +40,9 @@ public class MessagesListener implements IncomingChatMessageListener, OutgoingCh
         if (chatActive.get()) {
             String sender = message.getFrom().getResourceOrEmpty().toString();
             String body = message.getBody();
-            System.out.println("\n>> (" + sender + "): " + body + "\n");
+            if (!sender.equals("") && body != null){
+                System.out.println("\n>> (" + sender + "): " + body);
+            }
         }
     }
 }

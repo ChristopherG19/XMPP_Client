@@ -1,10 +1,19 @@
+/*
+    Universidad del Valle de Guatemala
+    Redes de Computadora
+    Christopher García 20541
+    Proyecto#1: Cliente XMPP
+*/
+
 public class NotificationP {
     private String sender; 
     private String content;
+    private String mode;
 
-    public NotificationP(String sender, String content) {
+    public NotificationP(String sender, String content, String mode) {
         this.sender = sender;
         this.content = content;
+        this.mode = mode;
     }
 
     public String getSender() {
@@ -23,7 +32,17 @@ public class NotificationP {
                 break;
 
             case "available":
-                newContent = "Me he conectado! Estoy en l\u00EDnea";
+                if (this.mode != null){
+                    if (this.mode.equals("available")) {
+                        newContent = "Me he conectado! Estoy en l\u00EDnea";
+                    } else if (this.mode.equals("away")) {
+                        newContent = "Me encuentro ausente en este momento";
+                    } else if (this.mode.equals("dnd")) {
+                        newContent = "Me encuentro ocupado en este momento";
+                    } else {
+                        newContent = "No me encuentro disponible en este momento";
+                    }
+                }
                 break;
 
             case "unavailable":
@@ -32,7 +51,9 @@ public class NotificationP {
         
             default:
                 String body = (this.content.equals("subscribed")) ? "Acepte tu invitación, ahora somos amigos" : this.content;
-                newContent = "Nuevo mensaje\n("+ this.sender + ") dice: " + body;
+                if(!body.equals("exit")){
+                    newContent = "Nuevo mensaje\n("+ this.sender + ") dice: " + body;
+                }
                 break;
         }
         return newContent;
@@ -40,6 +61,6 @@ public class NotificationP {
 
     @Override
     public String toString() {
-        return "Notificación de: " + sender + "\nContenido: " + get_type_content(content);
+        return "Notificación de: " + sender + "\nContenido: " + ((content != null) ? get_type_content(content) : "---");
     }
 }

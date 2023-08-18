@@ -25,6 +25,11 @@ import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.muc.MultiUserChatManager;
+import org.jivesoftware.smackx.xdata.Form;
+import org.jivesoftware.smackx.xdata.packet.DataForm;
+import org.jivesoftware.smackx.muc.MultiUserChatException.MissingMucCreationAcknowledgeException;
+import org.jivesoftware.smackx.muc.MultiUserChatException.MucAlreadyJoinedException;
+import org.jivesoftware.smackx.muc.MultiUserChatException.MucConfigurationNotSupportedException;
 import org.jivesoftware.smackx.muc.MultiUserChatException.NotAMucServiceException;
 import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.jid.parts.Resourcepart;
@@ -52,14 +57,14 @@ public class UserManager {
     public void getAllContacts(AbstractXMPPConnection connection) {
         Roster roster = Roster.getInstanceFor(connection);
         Collection<RosterEntry> entries = roster.getEntries();
-        
+
         // Impresión bonita gracias a chatGPT
         System.out.println("\n+-----------------+--------------------------+-----------------+-----------------------+");
         System.out.println("|                                 Lista de contactos                                   |");
         System.out.println("+-----------------+--------------------------+-----------------+-----------------------+");
         System.out.printf("| %-15s | %-24s | %-15s | %-21s |\n", "Nombre", "JID", "Estado", "Status");
         System.out.println("+-----------------+--------------------------+-----------------+-----------------------+");
-    
+
         for (RosterEntry entry : entries) {
             Presence presence = roster.getPresence(entry.getJid());
             String userStatus = get_presence_type(presence);
@@ -69,7 +74,7 @@ public class UserManager {
             System.out.printf("| %-15s | %-24s | %-15s | %-21s |\n", name, entry.getJid(), userStatus, status);
             System.out.println("+-----------------+--------------------------+-----------------+-----------------------+");
         }
-    }    
+    }
 
     public void addContact(AbstractXMPPConnection connection, String userJID, String name) {
         Roster roster = Roster.getInstanceFor(connection);
@@ -85,15 +90,15 @@ public class UserManager {
         String userStatus;
         Roster roster = Roster.getInstanceFor(connection);
         RosterEntry entry = roster.getEntry(JidCreate.entityBareFrom(userJID));
-    
+
         if (entry != null) {
             Presence presence = roster.getPresence(entry.getJid());
             userStatus = get_presence_type(presence);
-    
+
             String seeMy = entry.canSeeMyPresence() ? "Si" : "No";
             String seeHis = entry.canSeeHisPresence() ? "Si" : "No";
             String status = (presence.getStatus() == null) ? "Sin estado" : presence.getStatus();
-    
+
             System.out.println("\n\t\t\tInformación del usuario \n");
 
             String userDetails = "+--------------------------+------------------------+-----------------+\n";
@@ -101,13 +106,13 @@ public class UserManager {
             userDetails += "+--------------------------+------------------------+-----------------+\n";
             userDetails += String.format("| %-24s | %-22s | %-15s |\n", entry.getJid(), entry.getName(), userStatus);
             userDetails += "+--------------------------+------------------------+-----------------+\n";
-            
+
             userDetails += "\n+--------------------------+------------------------+-----------------+\n";
             userDetails += String.format("| %-24s | %-20s | %-15s |\n", "Puede ver mi presencia", "Puede ver su presencia", "Status");
             userDetails += "+--------------------------+------------------------+-----------------+\n";
             userDetails += String.format("| %-24s | %-22s | %-15s |\n", seeMy, seeHis, status);
             userDetails += "+--------------------------+------------------------+-----------------+\n";
-    
+
             return userDetails;
         } else {
             String ownJID = connection.getUser().asBareJid().toString();
@@ -115,7 +120,7 @@ public class UserManager {
             return ownDetails;
         }
     }
-    
+
     public void manageChat(AbstractXMPPConnection connection) throws XMPPException, XmppStringprepException{
         ChatManager chatManager = ChatManager.getInstanceFor(connection);
         Roster roster = Roster.getInstanceFor(connection);
@@ -147,7 +152,7 @@ public class UserManager {
                     break;
                 }
                 break;
-       
+
             case 2:
                 String userN = Terminal.get_contact_info();
                 if(!(userN == null)){
@@ -218,7 +223,7 @@ public class UserManager {
         Presence presence = new Presence(Presence.Type.available);
         presence.setStatus(status);
         try {
-            connection.sendStanza(presence);    
+            connection.sendStanza(presence);
             System.out.println("Mensaje de presencia actualizado correctamente!");
 
         } catch (SmackException.NotConnectedException | InterruptedException e) {
@@ -226,7 +231,7 @@ public class UserManager {
         }
     }
 
-    public void manageGroupChat(AbstractXMPPConnection connection) throws XmppStringprepException, NotAMucServiceException, NoResponseException, XMPPErrorException, NotConnectedException, InterruptedException{
+    public void manageGroupChat(AbstractXMPPConnection connection) throws XmppStringprepException, NotAMucServiceException, NoResponseException, XMPPErrorException, NotConnectedException, InterruptedException, MucConfigurationNotSupportedException, MucAlreadyJoinedException, MissingMucCreationAcknowledgeException{
         int type_gc = Terminal.get_type_groupChat();
         AtomicBoolean chatActive = new AtomicBoolean(true);
         switch (type_gc) {
@@ -238,16 +243,15 @@ public class UserManager {
                 System.out.println("Necesito que ingreses un par de datos");
                 String props = Terminal.get_GC_join_props();
                 String[] parts = props.split("\\$");
-    
+
                 String groupName = parts[0];
                 String username = parts[1];
 
                 String JIDGroup = groupName + "@conference.alumchat.xyz";
-                
+
                 MultiUserChatManager groups = MultiUserChatManager.getInstanceFor(connection);
                 MultiUserChat muc = groups.getMultiUserChat(JidCreate.entityBareFrom(JIDGroup));
-                Resourcepart nickname = Resourcepart.from(username);
-                muc.join(nickname);
+                muc.join(Resourcepart.from(username));
 
                 muc.addMessageListener(new MessagesListener(chatActive));
                 muc.addParticipantStatusListener(new ParticipantsListener());
@@ -272,20 +276,50 @@ public class UserManager {
             case 2:
                 // Create
                 System.out.println("Necesito que ingreses un par de datos");
+                String propsC = Terminal.get_GC_join_props();
+                String[] partsC = propsC.split("\\$");
+
+                String groupNameC = partsC[0];
+                String usernameC = partsC[1];
+                String JIDGroupC = groupNameC + "@conference.alumchat.xyz";
+                MultiUserChatManager groupsC = MultiUserChatManager.getInstanceFor(connection);
+                MultiUserChat mucC = groupsC.getMultiUserChat(JidCreate.entityBareFrom(JIDGroupC));
+                mucC.create(Resourcepart.from(groupNameC)).makeInstant();
+                mucC.sendConfigurationForm(new Form(DataForm.Type.submit));
+
+                // To set owners
+                // Set<Jid> owners = JidUtil.jidSetFrom(new String[] { connection.getUser().asBareJid().toString() });
+                // mucC.create(Resourcepart.from("room_name"))
+                //     .getConfigFormManager()
+                //     .setRoomOwners(owners)
+                //     .submitConfigurationForm();
+
+                mucC.join(Resourcepart.from(usernameC));
+
+                mucC.addMessageListener(new MessagesListener(chatActive));
+                mucC.addParticipantStatusListener(new ParticipantsListener());
+                mucC.addUserStatusListener(new ParticipantsListener());
+
+                try {
+                    String input;
+                    do {
+                        input = Terminal.get_message_to_Send();
+                        if (!input.equalsIgnoreCase("exit")){
+                            mucC.sendMessage(input);
+                        }
+                    } while (!input.equalsIgnoreCase("exit"));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    chatActive.set(false);
+                }
+
                 break;
-        
+
             default:
                 System.out.println("Ingresa una opción válida!");
                 break;
         }
-    }
-
-    public void joinGroupChat(AbstractXMPPConnection connection, String roomName, String nickName){
-
-    }
-
-    public void createGroupChat(AbstractXMPPConnection connection, String roomGroup){
-
     }
 
     public String get_presence_type(Presence presence){
