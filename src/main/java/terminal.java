@@ -277,24 +277,23 @@ public class Terminal {
     }
 
     public String get_GC_join_props() {
-        Scanner scanner = new Scanner(System.in);
-        String groupName = getValidInput(scanner, "Enter the group name: ");
-        String username = getValidInput(scanner, "Enter the username: ");
+        String groupName = getValidInput("Enter the group name: ");
+        String username = getValidInput("Enter the username: ");
 
         return groupName + "$" + username;
     }
 
-    private String getValidInput(Scanner scanner, String prompt) {
+    private String getValidInput(String prompt) {
         String input = "";
 
         Boolean valid = false;
         while (!valid) {
             System.out.print(prompt);
-            input = scanner.nextLine().trim();
+            input = scan.nextLine().trim();
             
             if (!input.isEmpty()) {
-                System.out.print("Confirm that " + input + " is correct? (y/n): ");
-                String confirmation = scanner.nextLine().toLowerCase();
+                System.out.print("\nConfirm that " + input + " is correct? (y/n): ");
+                String confirmation = scan.nextLine().toLowerCase();
                 
                 if (confirmation.equals("y")) {
                     valid = true;
@@ -308,6 +307,50 @@ public class Terminal {
         }
 
         return input;
+    }
+
+    public String get_file_props(){
+        String props = "";
+        boolean confi = false;
+        int option = 0;
+
+        while(!confi){
+            System.out.println("Opciones disponibles para env\u00EDo de archivos");
+            System.out.println("1) Enviar a usuario");
+            System.out.println("2) Enviar a grupo");
+            System.out.print("Selecciona una opci\u00F3n: ");
+            try {
+                if (scan.hasNextInt()) {
+                    option = scan.nextInt();
+                    switch (option) {
+                        case 1:
+                            String username = getValidInput("Enter the username: ");
+                            String path = getValidInput("Enter the path: ");
+                            props = username + "$" + path;
+                            break;
+                        case 2:
+                            String groupName = getValidInput("Enter the groupname: ");
+                            String nickName = getValidInput("Enter the nickname: ");
+                            String pathB = getValidInput("Enter the path: ");
+                            props = groupName + "$" + nickName + "$" + pathB;
+                            break;
+                    
+                        default:
+                            System.out.println("Opcion invalida!!!");
+                            break;
+                    }
+                    
+                } else {
+                    System.out.println("Ingresa valores numéricos!!!\n");
+                    scan.next();
+                }
+            } catch (Exception e) {
+                System.out.println("Hubo un error en la entrada. Ingresa valores numéricos!!!\n");
+                scan.next();
+            }
+        }
+
+        return props;
     }
 
     public static String toString(char[] a)

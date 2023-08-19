@@ -4,7 +4,11 @@
     Christopher García 20541
     Proyecto#1: Cliente XMPP
 */
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -20,6 +24,7 @@ import org.jivesoftware.smack.XMPPException.XMPPErrorException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.chat2.Chat;
 import org.jivesoftware.smack.chat2.ChatManager;
+import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.roster.RosterEntry;
@@ -319,6 +324,77 @@ public class UserManager {
             default:
                 System.out.println("Ingresa una opción válida!");
                 break;
+        }
+    }
+
+    public void sendFile(AbstractXMPPConnection connection) throws XmppStringprepException, MucAlreadyJoinedException, MissingMucCreationAcknowledgeException, NotAMucServiceException, NoResponseException, XMPPErrorException, NotConnectedException, InterruptedException{
+        String props = Terminal.get_file_props();
+        String[] parts = props.split("\\$");
+        AtomicBoolean chatActive = new AtomicBoolean(true);
+
+        if (parts.length < 2) {
+            System.out.println("Formato de entrada incorrecto.");
+            return;
+        }
+
+        if (parts.length == 2) {
+            // Envío a usuario
+            String user = parts[0];
+            String filePath = parts[1];
+            String recipientJID = user + "@alumchat.xyz";
+
+            ChatManager chatManager = ChatManager.getInstanceFor(connection);
+            Chat chat = chatManager.chatWith(JidCreate.entityBareFrom(recipientJID));
+
+            try {
+                byte[] fileBytes = Files.readAllBytes(Paths.get(filePath));
+                String base64Encoded = Base64.getEncoder().encodeToString(fileBytes);
+
+                Message message = new Message();
+                message.setBody("FILE:" + base64Encoded);
+                chat.send(message);
+
+                System.out.println("Archivo enviado correctamente.");
+            } catch (IOException | SmackException.NotConnectedException | InterruptedException e) {
+                e.printStackTrace();
+                System.out.println("Error al enviar el archivo.");
+            } finally {
+                chatActive.set(false);
+            }
+
+        } else if (parts.length == 3) {
+            // Envío a grupo
+            String group = parts[0];
+            String nickname = parts[1];
+            String filePath = parts[2];
+            String JIDGroupC = group + "@conference.alumchat.xyz";
+
+            MultiUserChatManager groupsC = MultiUserChatManager.getInstanceFor(connection);
+            MultiUserChat mucC = groupsC.getMultiUserChat(JidCreate.entityBareFrom(JIDGroupC));
+            mucC.create(Resourcepart.from(group)).makeInstant();
+            mucC.sendConfigurationForm(new Form(DataForm.Type.submit));
+            mucC.join(Resourcepart.from(nickname));
+
+            mucC.addMessageListener(new MessagesListener(chatActive));
+            mucC.addParticipantStatusListener(new ParticipantsListener());
+            mucC.addUserStatusListener(new ParticipantsListener());
+
+            try {
+                byte[] fileBytes = Files.readAllBytes(Paths.get(filePath));
+                String base64Encoded = Base64.getEncoder().encodeToString(fileBytes);
+    
+                Message message = new Message();
+                message.setBody("FILE:" + base64Encoded);
+                mucC.sendMessage(message);
+    
+                System.out.println("Archivo enviado correctamente.");
+            } catch (IOException | SmackException.NotConnectedException | InterruptedException e) {
+                e.printStackTrace();
+                System.out.println("Error al enviar el archivo.");
+            }
+
+        } else {
+            System.out.println("Formato de entrada incorrecto.");
         }
     }
 
