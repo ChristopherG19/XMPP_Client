@@ -10,76 +10,90 @@ import java.io.Console;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-
+/**
+ * This class handles terminal input and output for user interactions.
+ */
 public class Terminal {
 
     Scanner scan = new Scanner(System.in);
 
-    /** 
-     * adminMenu Method: print the menu and request an option
-     * @return int: user option
-     */
+    /**
+    * Displays the admin menu and retrieves the selected option.
+    *
+    * @return int: User-selected option
+    */
     public int adminMenu(){
         int option = 0;
 
-        System.out.println("\n----- Chat Redes -----");
-        System.out.println("Opciones disponibles: ");
-        System.out.println("1) Registrar una nueva cuenta en el servidor");
-        System.out.println("2) Iniciar sesi\u00F3n con una cuenta");
-        System.out.println("3) Cerrar sesi\u00F3n con una cuenta");
-        System.out.println("4) Eliminar la cuenta del servidor");
-        System.out.println("5) Salir");
-        System.out.print("\nIngrese una opci\u00F3n: ");
+        System.out.println("\n----- Chat Network -----");
+        System.out.println("Available options: ");
+        System.out.println("1) Register a new account on the server");
+        System.out.println("2) Log in with an account");
+        System.out.println("3) Log out with an account");
+        System.out.println("4) Delete account from the server");
+        System.out.println("5) Exit");
+        System.out.print("\nEnter an option: ");
     
         try{
            option = Integer.valueOf(scan.nextLine());
         } catch (Exception e){
-            System.out.println("Error! Solo valores numericos permitidos");
+            System.out.println("Error! Only numeric values are allowed");
         }
 
         return option;
     }
 
+    /**
+     * Displays the user menu and retrieves the selected option.
+     *
+     * @param username String: Username of the user
+     * @return int: User-selected option
+     */
     public int userMenu(String username){
         int option = 0;
 
-        System.out.println("\n----------- Chat Redes -----------");
-        String welcome = String.format("Usuario conectado: %s", username);
+        System.out.println("\n----------- Chat Network -----------");
+        String welcome = String.format("Connected User: %s", username);
         System.out.println(welcome);
-        System.out.println("----------------------------------");
-        System.out.println("\nOpciones disponibles: ");
-        System.out.println("1) Mostrar todos los contactos y su estado");
-        System.out.println("2) Agregar un usuario a los contactos");
-        System.out.println("3) Mostrar detalles de contacto de un usuario");
-        System.out.println("4) Comunicación 1 a 1 con cualquier usuario/contacto");
-        System.out.println("5) Participar en conversaciones grupales");
-        System.out.println("6) Definir mensaje de presencia");
-        System.out.println("7) Notificaciones");
-        System.out.println("8) Enviar/recibir archivos");
-        System.out.println("9) Cerrar sesi\u00F3n");
-        System.out.print("\nIngrese una opci\u00F3n: ");
+        System.out.println("------------------------------------");
+        System.out.println("\nAvailable options: ");
+        System.out.println("1) Show all contacts and their status");
+        System.out.println("2) Add a user to contacts");
+        System.out.println("3) Show contact details");
+        System.out.println("4) One-to-one communication with any user/contact");
+        System.out.println("5) Participate in group conversations");
+        System.out.println("6) Set presence message");
+        System.out.println("7) Notifications");
+        System.out.println("8) Send/receive files");
+        System.out.println("9) Log out");
+        System.out.print("\nEnter an option: ");
 
         try{
            option = Integer.valueOf(scan.nextLine());
         } catch (Exception e){
-            System.out.println("Error! Solo valores numericos permitidos");
+            System.out.println("Error! Only numeric values are allowed");
         }
 
         return option;
     }
 
+    /**
+     * Retrieves new user registration information.
+     *
+     * @return List of strings containing user information
+     */
     public List<String> getNewUserInfo(){
         List<String> values = new ArrayList<>();
         Boolean allOK = false;
 
         while (!allOK){
-            System.out.println("\nPara poder registrar una nueva cuenta necesitamos algunos datos...");
-            System.out.print("1) Nombre de usuario: ");
+            System.out.println("\nTo register a new account, we need some information...");
+            System.out.print("1) Username: ");
             String username = scan.nextLine();
             Console console = System.console();
-            char[] pswd = console.readPassword("2) Ingresa contrase\u00F1a: ");
+            char[] pswd = console.readPassword("2) Enter password: ");
             String password = toString(pswd);
-            char[] pswdConf = console.readPassword("3) Confirma contrase\u00F1a: ");
+            char[] pswdConf = console.readPassword("3) Confirm password: ");
             String passwordConf = toString(pswdConf);
 
             values.add(username);
@@ -87,31 +101,41 @@ public class Terminal {
                 values.add(password);
                 allOK = true;
             } else {
-                System.out.println("Las contrase\u00F1as no coinciden!!!");
+                System.out.println("Passwords do not match!!!");
             }
         }
         
         return values;
     }
 
+    /**
+     * Retrieves user login credentials.
+     *
+     * @return List of strings containing username and password
+     */
     public List<String> getUserCredentials(){
         List<String> values = new ArrayList<>();
 
-        System.out.println("\nIngresa los siguientes datos para loggearte...");
-        System.out.print("1) Nombre de usuario: ");
+        System.out.println("\nEnter the following data to log in...");
+        System.out.print("1) Username: ");
         String username = scan.nextLine();
         Console console = System.console();
-        char[] pswd = console.readPassword("2) Ingresa contrase\u00F1a: ");
+        char[] pswd = console.readPassword("2) Enter password: ");
         String password = toString(pswd);
 
         values.add(username);
         values.add(password);
         return values;
     }
-
+    
+    /**
+     * Prompts the user for a choice regarding closing the session.
+     *
+     * @return int: User-selected option (1 for yes, 0 for no, 2 for invalid)
+     */
     public int get_close_session_answer(){
         int opc = 0;
-        System.out.print("Deseas eliminar esta cuenta del servidor (y/n): ");
+        System.out.print("Do you want to delete this account from the server? (y/n): ");
         String opca = scan.nextLine();
         switch (opca.toLowerCase()) {
             case "y":
@@ -121,16 +145,21 @@ public class Terminal {
                 opc = 0;
                 break;
             default:
-                System.out.println("Opcion invalida");
+                System.out.println("Invalid option");
                 opc = 2;
                 break;
         }
         return opc;
     }
 
+    /**
+     * Prompts the user for a choice regarding staying online after login.
+     *
+     * @return int: User-selected option (1 for yes, 0 for no, 2 for invalid)
+     */
     public int get_stay_online_answer(){
         int ans = 0;
-        System.out.print("Deseas ingresar inmediatamente y quedarte conectado/a? (y/n)");
+        System.out.print("Do you want to log in immediately and stay online? (y/n): ");
         String ansU = scan.nextLine();
         switch (ansU.toLowerCase()) {
             case "y":
@@ -140,19 +169,24 @@ public class Terminal {
                 ans = 0;
                 break;
             default:
-                System.out.println("Opcion invalida");
+                System.out.println("Invalid option");
                 ans = 2;
                 break;
         }
         return ans;
     }
 
+    /**
+     * Prompts the user for contact information.
+     *
+     * @return String: Contact username
+     */
     public String get_contact_info() {
         String user = "";
         boolean isValid = false;
         
         while (!isValid) {
-            System.out.print("Usuario del contacto: ");
+            System.out.print("Contact username: ");
             user = scan.nextLine();
             
             if (!user.trim().isEmpty()) {
@@ -161,22 +195,27 @@ public class Terminal {
                 }
                 isValid = true;
             } else {
-                System.out.println("\nPrueba de nuevo o escribe exit si deseas salir\n");
+                System.out.println("\nTry again or type 'exit' to cancel\n");
             }
         }
         
         return user;
     }
 
+    /**
+     * Prompts the user to enter a new status message.
+     *
+     * @return String: User-entered status message
+     */
     public String get_new_status(){
         String status = "";
         boolean confirm = false;
         while(!confirm){
-            System.out.print("Ingresa tu mensaje de presencia: ");
+            System.out.print("Enter your presence message: ");
             status = scan.nextLine();
             boolean confirmB = false;
             while(!confirmB){
-                System.out.print("Est\u00E1s seguro? (y/n): ");
+                System.out.print("Are you sure? (y/n): ");
                 String op = scan.nextLine();
                 switch (op.toLowerCase()) {
                     case "y":
@@ -187,7 +226,7 @@ public class Terminal {
                         confirmB = true;
                         break;
                     default:
-                        System.out.println("Ingresa una opción válida\n");
+                        System.out.println("Enter a valid option\n");
                         break;
                 }
             }
@@ -196,77 +235,102 @@ public class Terminal {
         return status;
     }
 
+    /**
+     * Prompts the user to choose a chat type.
+     *
+     * @return int: User-selected chat type (1 for contact, 2 for new user, 3 to exit)
+     */
     public int get_type_chat(){
         int res = 0;
         boolean isValid = false;
 
         while(!isValid){
-            System.out.println("Opciones disponibles\n");
-            System.out.println("1) Chat con contactos");
-            System.out.println("2) Chat con nuevo usuario");
-            System.out.println("3) Salir");
-            System.out.print("¿Que deseas hacer?: ");
+            System.out.println("Available options\n");
+            System.out.println("1) Chat with contacts");
+            System.out.println("2) Chat with a new user");
+            System.out.println("3) Exit");
+            System.out.print("What would you like to do?: ");
             try {
                 res = scan.nextInt();
                 isValid = true;
             } catch (Exception e) {
-                System.out.println("Ingresa valores numéricos!!!\n");
+                System.out.println("Enter numeric values!!!\n");
             }
         }
         return res;
     }
 
+    /**
+     * Prompts the user to choose a contact for a conversation.
+     *
+     * @return int: User-selected contact number (0 to exit)
+     */
     public int get_user_chat() {
         int us = 0;
         boolean isValid = false;
         while (!isValid) {
-            System.out.print("Ingresa el número de contacto para iniciar conversación (0 para salir): ");
+            System.out.print("Enter the contact number to start a conversation (0 to exit): ");
             try {
                 if (scan.hasNextInt()) {
                     us = scan.nextInt();
                     isValid = true;
                 } else {
-                    System.out.println("Ingresa valores numéricos!!!\n");
+                    System.out.println("Enter numeric values!!!\n");
                     scan.next();
                 }
             } catch (Exception e) {
-                System.out.println("Hubo un error en la entrada. Ingresa valores numéricos!!!\n");
+                System.out.println("An error occurred in input. Enter numeric values!!!\n");
                 scan.next();
             }
         }
         return us;
     }
 
+    /**
+     * Prompts the user to choose a group chat action.
+     *
+     * @return int: User-selected group chat action (1 to join, 2 to create group, 0 to exit)
+     */
     public int get_type_groupChat(){
         int us = 0;
         boolean isValid = false;
         while (!isValid) {
-            System.out.println("Conversaciones grupales");
-            System.out.println("1) Ingresar a conversación");
-            System.out.println("2) Crear grupo");
-            System.out.print("Ingresa una opción (0 para salir): ");
+            System.out.println("Group Conversations");
+            System.out.println("1) Join a conversation");
+            System.out.println("2) Create a group");
+            System.out.print("Enter an option (0 to exit): ");
             try {
                 if (scan.hasNextInt()) {
                     us = scan.nextInt();
                     isValid = true;
                 } else {
-                    System.out.println("Ingresa valores numéricos!!!\n");
+                    System.out.println("Enter numeric values!!!\n");
                     scan.next();
                 }
             } catch (Exception e) {
-                System.out.println("Hubo un error en la entrada. Ingresa valores numéricos!!!\n");
+                System.out.println("An error occurred in input. Enter numeric values!!!\n");
                 scan.next();
             }
         }
         return us;
     }
 
+    /**
+     * Prompts the user for a message to send.
+     *
+     * @return String: User-entered message
+     */
     public String get_message_to_Send(){
         System.out.print(">> ");
         String res = scan.nextLine();
         return res;
     }
 
+    /**
+     * Prints the list of pending notifications.
+     *
+     * @param notis List<NotificationP>: List of pending notifications
+     */
     public void print_notis(List<NotificationP> notis){
         System.out.println("Notifications:");
         for (NotificationP notification : notis) {
@@ -276,6 +340,11 @@ public class Terminal {
         }
     }
 
+    /**
+     * Gets the properties for joining a group chat.
+     *
+     * @return String: Group name and username separated by '$'
+     */
     public String get_GC_join_props() {
         String groupName = getValidInput("Enter the group name: ");
         String username = getValidInput("Enter the username: ");
@@ -283,6 +352,12 @@ public class Terminal {
         return groupName + "$" + username;
     }
 
+    /**
+     * Prompts the user for valid input and confirms the input.
+     *
+     * @param prompt String: The prompt to display for input
+     * @return String: Valid user-entered input
+     */
     private String getValidInput(String prompt) {
         String input = "";
 
@@ -309,16 +384,21 @@ public class Terminal {
         return input;
     }
 
+    /**
+     * Gets the properties for sending a file.
+     *
+     * @return String: File properties separated by '$'
+     */
     public String get_file_props(){
         String props = "";
         boolean confi = false;
         int option = 0;
 
         while(!confi){
-            System.out.println("Opciones disponibles para env\u00EDo de archivos");
-            System.out.println("1) Enviar a usuario");
-            System.out.println("2) Enviar a grupo");
-            System.out.print("Selecciona una opci\u00F3n: ");
+            System.out.println("Available options for file sending");
+            System.out.println("1) Send to a user");
+            System.out.println("2) Send to a group");
+            System.out.print("Select an option: ");
             try {
                 if (scan.hasNextInt()) {
                     option = scan.nextInt();
@@ -338,16 +418,16 @@ public class Terminal {
                             break;
                     
                         default:
-                            System.out.println("Opcion invalida!!!");
+                            System.out.println("Invalid option!!!");
                             break;
                     }
                     
                 } else {
-                    System.out.println("Ingresa valores numéricos!!!\n");
+                    System.out.println("Enter numeric values!!!\n");
                     scan.next();
                 }
             } catch (Exception e) {
-                System.out.println("Hubo un error en la entrada. Ingresa valores numéricos!!!\n");
+                System.out.println("An error occurred in input. Enter numeric values!!!\n");
                 scan.next();
             }
         }
@@ -355,6 +435,12 @@ public class Terminal {
         return props;
     }
 
+    /**
+     * Converts a character array to a string.
+     *
+     * @param a char[]: Character array
+     * @return String: Converted string
+     */
     public static String toString(char[] a)
     {
         String string = new String(a);

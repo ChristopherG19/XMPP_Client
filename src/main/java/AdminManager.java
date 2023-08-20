@@ -23,11 +23,22 @@ import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.jid.parts.Localpart;
 import org.jxmpp.stringprep.XmppStringprepException;
 
+/**
+ * This class handles administrative tasks related to user management.
+ */
 public class AdminManager{
     
     Terminal Terminal = new Terminal();
     String xmppDomainString = "alumchat.xyz";
 
+     /**
+     * Generates the XMPP TCP connection configuration.
+     *
+     * @param username The username of the user.
+     * @param password The password of the user.
+     * @return The generated connection configuration.
+     * @throws XmppStringprepException If there's an issue with XMPP string preparation.
+     */
     public XMPPTCPConnectionConfiguration get_config(String username, String password) throws XmppStringprepException{
         DomainBareJid xmppDomain = JidCreate.domainBareFrom(xmppDomainString);
 
@@ -42,6 +53,13 @@ public class AdminManager{
         return config;
     }
 
+    /**
+     * Registers a new user account.
+     *
+     * @param username The username of the new user.
+     * @param password The password of the new user.
+     * @throws XmppStringprepException If there's an issue with XMPP string preparation.
+     */
     public void Register(String username, String password) throws XmppStringprepException{
         
         XMPPTCPConnectionConfiguration config = get_config(username, password);
@@ -59,14 +77,22 @@ public class AdminManager{
             roster.reload();
 
             connection.disconnect();
-            System.out.println("Cuenta creada exitosamente!!!");
+            System.out.println("Account created successfully!!!");
 
         } catch (SmackException | IOException | XMPPException | InterruptedException e) {
             System.out.println(e);
-            System.out.println("Ha ocurrido un error, intenta m\u00E1s tarde");
+            System.out.println("An error occurred, please try again later.");
         }
     }
 
+    /**
+     * Logs in a user.
+     *
+     * @param username The username of the user.
+     * @param password The password of the user.
+     * @return The connection if login is successful, null otherwise.
+     * @throws XmppStringprepException If there's an issue with XMPP string preparation.
+     */
     public AbstractXMPPConnection Login(String username, String password) throws XmppStringprepException{
         XMPPTCPConnectionConfiguration config = get_config(username, password);
         AbstractXMPPConnection connection = new XMPPTCPConnection(config);
@@ -81,14 +107,25 @@ public class AdminManager{
         }
     }
 
+    /**
+     * Closes the user session.
+     *
+     * @param connection The connection to be closed.
+     * @return Null after closing the session.
+     */
     public AbstractXMPPConnection CloseSession(AbstractXMPPConnection connection){
         if (connection != null && connection.isConnected()) {
             connection.disconnect();
         }
-        System.out.println("Cuenta cerrada exitosamente! Vuelve pronto!");
+        System.out.println("Session closed successfully! Come back soon!");
         return null;
     }
 
+    /**
+     * Deletes the user account.
+     *
+     * @param connection The connection for the user.
+     */
     public void DeleteAccount(AbstractXMPPConnection connection){
         AccountManager accManager = AccountManager.getInstance(connection);
         try {

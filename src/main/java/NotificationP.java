@@ -5,62 +5,93 @@
     Proyecto#1: Cliente XMPP
 */
 
+/**
+ * This class represents a notification with sender information, content, and mode.
+ */
 public class NotificationP {
     private String sender; 
     private String content;
     private String mode;
 
+    /**
+     * Constructs a notification with the given sender, content, and mode.
+     *
+     * @param sender The sender of the notification.
+     * @param content The content of the notification.
+     * @param mode The mode of the notification.
+     */
     public NotificationP(String sender, String content, String mode) {
         this.sender = sender;
         this.content = content;
         this.mode = mode;
     }
 
+    /**
+     * Returns the sender of the notification.
+     *
+     * @return The sender of the notification.
+     */
     public String getSender() {
         return sender;
     }
 
+    /**
+     * Returns the content of the notification.
+     *
+     * @return The content of the notification.
+     */
     public String getContent() {
         return content;
     }
 
+    /**
+     * Gets the appropriate content type based on the content.
+     *
+     * @param content The content of the notification.
+     * @return The translated content based on its type.
+     */
     public String get_type_content(String content){
         String newContent = "";
         switch (content) {
             case "subscribe":
-                newContent = "Hola!!! Me gustar\u00EDa tenerte de contacto";
+                newContent = "Hello! I'd like to have you as a contact.";
                 break;
 
             case "available":
                 if (this.mode != null){
                     if (this.mode.equals("available")) {
-                        newContent = "Me he conectado! Estoy en l\u00EDnea";
+                        newContent = "I'm online and available.";
                     } else if (this.mode.equals("away")) {
-                        newContent = "Me encuentro ausente en este momento";
+                        newContent = "I'm currently away.";
                     } else if (this.mode.equals("dnd")) {
-                        newContent = "Me encuentro ocupado en este momento";
+                        newContent = "I'm busy right now.";
                     } else {
-                        newContent = "No me encuentro disponible en este momento";
+                        newContent = "I'm not available at the moment.";
                     }
                 }
                 break;
 
             case "unavailable":
-                newContent = "Me he desconectado! Hasta la pr\u00F3xima";
+                newContent = "I've gone offline. See you next time!";
                 break;
         
             default:
-                String body = (this.content.equals("subscribed")) ? "Acepte tu invitación, ahora somos amigos" : this.content;
+                String body = (this.content.equals("subscribed")) ? "Accepted your invitation, now we're friends" : this.content;
                 if(!body.equals("exit")){
-                    newContent = "Nuevo mensaje\n("+ this.sender + ") dice: " + body;
+                    newContent = "New message\n(" + this.sender + ") says: " + body;
                 }
                 break;
         }
         return newContent;
     }
 
+    /**
+     * Returns a string representation of the notification.
+     *
+     * @return A string representation of the notification.
+     */
     @Override
     public String toString() {
-        return "Notificación de: " + sender + "\nContenido: " + ((content != null) ? get_type_content(content) : "---");
+        return "Notification from: " + sender + "\nContent: " + ((content != null) ? get_type_content(content) : "---");
     }
 }

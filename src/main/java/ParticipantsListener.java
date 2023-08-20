@@ -12,7 +12,13 @@ import org.jxmpp.jid.EntityFullJid;
 import org.jxmpp.jid.Jid;
 import org.jxmpp.jid.parts.Resourcepart;
 
+/**
+ * This class implements the ParticipantStatusListener and UserStatusListener interfaces
+ * to handle various participant status events in a multi-user chat room.
+ */
 public class ParticipantsListener implements ParticipantStatusListener, UserStatusListener{
+
+    // ParticipantStatusListener methods
     @Override
     public void joined(EntityFullJid participant) {
         String occupant = participant.getLocalpartOrNull().toString();
@@ -105,6 +111,7 @@ public class ParticipantsListener implements ParticipantStatusListener, UserStat
         System.out.println("Nickname changed for participant: " + occupant + ", New nickname: " + newNicknameStr);
     }
 
+    // UserStatusListener methods
     @Override
     public void kicked(Jid actor, String reason) {
         String actorJid = actor.toString();

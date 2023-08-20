@@ -40,6 +40,9 @@ import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.jid.parts.Resourcepart;
 import org.jxmpp.stringprep.XmppStringprepException;
 
+/**
+ * This class manages user interactions and operations.
+ */
 public class UserManager {
 
     Terminal Terminal = new Terminal();
@@ -47,33 +50,51 @@ public class UserManager {
 
     private List<NotificationP> pendingNotifications;
 
+    /**
+     * Constructor for UserManager class.
+     */
     public UserManager() {
         pendingNotifications = new ArrayList<>();
     }
 
+    /**
+     * Adds a pending notification to the list.
+     *
+     * @param notification NotificationP: The notification to be added
+     */
     public void addPendingNotification(NotificationP notification) {
         pendingNotifications.add(notification);
     }
 
+    /**
+     * Retrieves the list of pending notifications.
+     *
+     * @return List<NotificationP>: List of pending notifications
+     */
     public List<NotificationP> getPendingNotifications() {
         return pendingNotifications;
     }
 
+    /**
+     * Retrieves and prints details of all user contacts.
+     *
+     * @param connection AbstractXMPPConnection: The XMPP connection
+     */
     public void getAllContacts(AbstractXMPPConnection connection) {
         Roster roster = Roster.getInstanceFor(connection);
         Collection<RosterEntry> entries = roster.getEntries();
 
         // Impresión bonita gracias a chatGPT
         System.out.println("\n+-----------------+--------------------------+-----------------+-----------------------+");
-        System.out.println("|                                 Lista de contactos                                   |");
+        System.out.println("|                                    Contact List                                      |");
         System.out.println("+-----------------+--------------------------+-----------------+-----------------------+");
-        System.out.printf("| %-15s | %-24s | %-15s | %-21s |\n", "Nombre", "JID", "Estado", "Status");
+        System.out.printf("| %-15s | %-24s | %-15s | %-21s |\n", "Name", "JID", "Status", "Status message");
         System.out.println("+-----------------+--------------------------+-----------------+-----------------------+");
 
         for (RosterEntry entry : entries) {
             Presence presence = roster.getPresence(entry.getJid());
             String userStatus = get_presence_type(presence);
-            String status = (presence.getStatus() == null) ? "Sin estado" : presence.getStatus();
+            String status = (presence.getStatus() == null) ? "No status" : presence.getStatus();
             String name = (entry.getName() == null) ? entry.getJid().toString().substring(0, entry.getJid().toString().indexOf("@")) : entry.getName();
 
             System.out.printf("| %-15s | %-24s | %-15s | %-21s |\n", name, entry.getJid(), userStatus, status);
@@ -81,16 +102,34 @@ public class UserManager {
         }
     }
 
+    /**
+     * Adds a contact to the user's roster.
+     *
+     * @param connection AbstractXMPPConnection: The XMPP connection
+     * @param userJID    String: The JID of the user to add
+     * @param name       String: The name of the user to add
+     */
     public void addContact(AbstractXMPPConnection connection, String userJID, String name) {
         Roster roster = Roster.getInstanceFor(connection);
         try {
             roster.createEntry(JidCreate.entityBareFrom(userJID), name, null);
-            System.out.println("Invitacion de contacto enviada correctamente\n");
+            System.out.println("Contact invitation sent successfully.\n");
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    /**
+     * Retrieves and displays details of a user.
+     *
+     * @param connection AbstractXMPPConnection: The XMPP connection
+     * @param userJID    String: The JID of the user to retrieve details for
+     * @return String: The user details as a formatted string
+     * @throws XmppStringprepException      If there's an issue with XMPP stringprep
+     * @throws NotLoggedInException        If the user is not logged in
+     * @throws NotConnectedException       If the user is not connected
+     * @throws InterruptedException       If the operation is interrupted
+     */
     public String getUserDetails(AbstractXMPPConnection connection, String userJID) throws XmppStringprepException, NotLoggedInException, NotConnectedException, InterruptedException {
         String userStatus;
         Roster roster = Roster.getInstanceFor(connection);
@@ -100,20 +139,20 @@ public class UserManager {
             Presence presence = roster.getPresence(entry.getJid());
             userStatus = get_presence_type(presence);
 
-            String seeMy = entry.canSeeMyPresence() ? "Si" : "No";
-            String seeHis = entry.canSeeHisPresence() ? "Si" : "No";
-            String status = (presence.getStatus() == null) ? "Sin estado" : presence.getStatus();
+            String seeMy = entry.canSeeMyPresence() ? "Yes" : "No";
+            String seeHis = entry.canSeeHisPresence() ? "Yes" : "No";
+            String status = (presence.getStatus() == null) ? "No status" : presence.getStatus();
 
-            System.out.println("\n\t\t\tInformación del usuario \n");
+            System.out.println("\n\t\t\tUser Information \n");
 
             String userDetails = "+--------------------------+------------------------+-----------------+\n";
-            userDetails += String.format("| %-24s | %-22s | %-15s |\n", "JID", "Username", "Estado");
+            userDetails += String.format("| %-24s | %-22s | %-15s |\n", "JID", "Username", "Status");
             userDetails += "+--------------------------+------------------------+-----------------+\n";
             userDetails += String.format("| %-24s | %-22s | %-15s |\n", entry.getJid(), entry.getName(), userStatus);
             userDetails += "+--------------------------+------------------------+-----------------+\n";
 
             userDetails += "\n+--------------------------+------------------------+-----------------+\n";
-            userDetails += String.format("| %-24s | %-20s | %-15s |\n", "Puede ver mi presencia", "Puede ver su presencia", "Status");
+            userDetails += String.format("| %-24s | %-20s | %-15s |\n", "Can See My Presence", "Can See His Presence", "Status");
             userDetails += "+--------------------------+------------------------+-----------------+\n";
             userDetails += String.format("| %-24s | %-22s | %-15s |\n", seeMy, seeHis, status);
             userDetails += "+--------------------------+------------------------+-----------------+\n";
@@ -121,11 +160,18 @@ public class UserManager {
             return userDetails;
         } else {
             String ownJID = connection.getUser().asBareJid().toString();
-            String ownDetails = "Información del usuario: " + ownJID;
+            String ownDetails = "User Information: " + ownJID;
             return ownDetails;
         }
     }
 
+    /**
+     * Manages the user's chat interactions.
+     *
+     * @param connection AbstractXMPPConnection: The XMPP connection
+     * @throws XMPPException              If there's an XMPP exception
+     * @throws XmppStringprepException    If there's an issue with XMPP stringprep
+     */
     public void manageChat(AbstractXMPPConnection connection) throws XMPPException, XmppStringprepException{
         ChatManager chatManager = ChatManager.getInstanceFor(connection);
         Roster roster = Roster.getInstanceFor(connection);
@@ -133,7 +179,7 @@ public class UserManager {
         int res = Terminal.get_type_chat();
         switch (res) {
             case 1:
-                System.out.println("\nEstos contactos están disponibles...\n");
+                System.out.println("\nThese contacts are available...\n");
                 Map<Integer, RosterEntry> availableContacts = getAvailableContacts(connection);
                 if(availableContacts.size() > 0){
                     for (Map.Entry<Integer, RosterEntry> entry : availableContacts.entrySet()) {
@@ -141,7 +187,7 @@ public class UserManager {
                         Presence presence = roster.getPresence(rosterEntry.getJid());
                         String presenceStatus = get_presence_type(presence);
 
-                        System.out.println(entry.getKey() + ") " + " Usuario: " + rosterEntry.getJid() + " | Estado: " + presenceStatus);
+                        System.out.println(entry.getKey() + ") " + " User: " + rosterEntry.getJid() + " | Status: " + presenceStatus);
                     }
                     int us = Terminal.get_user_chat();
                     if(us != 0){
@@ -149,11 +195,11 @@ public class UserManager {
                         String userJIDE = selectedUser.getJid().asBareJid().toString();
                         startChatWithContact(chatManager, userJIDE);
                     } else {
-                        System.out.println("Cancelando operación...");
+                        System.out.println("Cancelling operation...");
                         break;
                     }
                 } else {
-                    System.out.println("No hay contactos disponibles");
+                    System.out.println("No available contacts");
                     break;
                 }
                 break;
@@ -165,24 +211,30 @@ public class UserManager {
                     startChatWithContact(chatManager, userJID);
                     break;
                 } else {
-                    System.out.println("Cancelando operación...");
+                    System.out.println("Cancelling operation...");
                     break;
                 }
             default:
-                System.out.println("Ingresa una opción válida!");
+                System.out.println("Enter a valid option!");
                 break;
         }
-
-
     }
 
+    /**
+     * Starts a chat with the specified contact.
+     *
+     * @param chatManager ChatManager: The chat manager
+     * @param contact     String: The contact's JID
+     * @throws XMPPException            If there's an XMPP exception
+     * @throws XmppStringprepException  If there's an issue with XMPP stringprep
+     */
     private void startChatWithContact(ChatManager chatManager, String contact) throws XMPPException, XmppStringprepException {
         Chat chat = chatManager.chatWith(JidCreate.entityBareFrom(contact));
         AtomicBoolean chatActive = new AtomicBoolean(true);
         chatManager.addIncomingListener(new MessagesListener(chatActive));
         chatManager.addOutgoingListener(new MessagesListener(chatActive));
 
-        System.out.println("Chat con " + contact + " inició. Escribe 'exit' para terminar la conversación.");
+        System.out.println("Chat with " + contact + " initiated. Type 'exit' to end the conversation.");
 
         try {
             String input;
@@ -198,9 +250,15 @@ public class UserManager {
             chatActive.set(false);
         }
 
-        System.out.println("\nChat con " + contact + " finalizado.");
+        System.out.println("\nChat with " + contact + " ended.");
     }
 
+    /**
+     * Retrieves a map of available contacts.
+     *
+     * @param connection AbstractXMPPConnection: The XMPP connection
+     * @return Map<Integer, RosterEntry>: Map of available contacts
+     */
     private Map<Integer, RosterEntry> getAvailableContacts(AbstractXMPPConnection connection) {
         Roster roster = Roster.getInstanceFor(connection);
         Collection<RosterEntry> entries = roster.getEntries();
@@ -220,32 +278,59 @@ public class UserManager {
         return availableContacts;
     }
 
+    /**
+     * Retrieves a contact from the available contacts map at a given position.
+     *
+     * @param availableContacts Map<Integer, RosterEntry>: Map of available contacts
+     * @param position          int: Position of the contact
+     * @return RosterEntry: The selected contact
+     */
     private RosterEntry getContactAtPosition(Map<Integer, RosterEntry> availableContacts, int position) {
         return availableContacts.get(position);
     }
 
+    /**
+     * Updates the user's presence status.
+     *
+     * @param connection AbstractXMPPConnection: The XMPP connection
+     * @param status     String: The new status
+     */
     public void updateUserStatus(AbstractXMPPConnection connection, String status) {
         Presence presence = new Presence(Presence.Type.available);
         presence.setStatus(status);
         try {
             connection.sendStanza(presence);
-            System.out.println("Mensaje de presencia actualizado correctamente!");
+            System.out.println("Presence message updated successfully!");
 
         } catch (SmackException.NotConnectedException | InterruptedException e) {
             e.printStackTrace();
         }
     }
 
+    /**
+     * Manages the group chat functionality.
+     *
+     * @param connection AbstractXMPPConnection: The XMPP connection
+     * @throws XmppStringprepException           If there's an XMPP stringprep exception
+     * @throws NotAMucServiceException           If the service is not a Multi-User Chat service
+     * @throws NoResponseException               If there's no response
+     * @throws XMPPErrorException               If there's an XMPP error
+     * @throws NotConnectedException             If not connected
+     * @throws InterruptedException             If the thread is interrupted
+     * @throws MucConfigurationNotSupportedException  If MUC configuration is not supported
+     * @throws MucAlreadyJoinedException         If already joined the MUC
+     * @throws MissingMucCreationAcknowledgeException  If the MUC creation acknowledgement is missing
+     */
     public void manageGroupChat(AbstractXMPPConnection connection) throws XmppStringprepException, NotAMucServiceException, NoResponseException, XMPPErrorException, NotConnectedException, InterruptedException, MucConfigurationNotSupportedException, MucAlreadyJoinedException, MissingMucCreationAcknowledgeException{
         int type_gc = Terminal.get_type_groupChat();
         AtomicBoolean chatActive = new AtomicBoolean(true);
         switch (type_gc) {
             case 0:
-                System.out.println("Cancelando operación...");
+                System.out.println("Cancelling operation...");
                 break;
             case 1:
                 // Join
-                System.out.println("Necesito que ingreses un par de datos");
+                System.out.println("Please provide the necessary data");
                 String props = Terminal.get_GC_join_props();
                 String[] parts = props.split("\\$");
 
@@ -280,7 +365,7 @@ public class UserManager {
 
             case 2:
                 // Create
-                System.out.println("Necesito que ingreses un par de datos");
+                System.out.println("Please provide the necessary data");
                 String propsC = Terminal.get_GC_join_props();
                 String[] partsC = propsC.split("\\$");
 
@@ -322,23 +407,36 @@ public class UserManager {
                 break;
 
             default:
-                System.out.println("Ingresa una opción válida!");
+                System.out.println("Please enter a valid option!");
                 break;
         }
     }
 
+    /**
+     * Sends a file through the XMPP connection.
+     *
+     * @param connection AbstractXMPPConnection: The XMPP connection
+     * @throws XmppStringprepException           If there's an XMPP stringprep exception
+     * @throws MucAlreadyJoinedException        If already joined the MUC
+     * @throws MissingMucCreationAcknowledgeException  If the MUC creation acknowledgement is missing
+     * @throws NotAMucServiceException           If the service is not a Multi-User Chat service
+     * @throws NoResponseException               If there's no response
+     * @throws XMPPErrorException               If there's an XMPP error
+     * @throws NotConnectedException             If not connected
+     * @throws InterruptedException             If the thread is interrupted
+     */
     public void sendFile(AbstractXMPPConnection connection) throws XmppStringprepException, MucAlreadyJoinedException, MissingMucCreationAcknowledgeException, NotAMucServiceException, NoResponseException, XMPPErrorException, NotConnectedException, InterruptedException{
         String props = Terminal.get_file_props();
         String[] parts = props.split("\\$");
         AtomicBoolean chatActive = new AtomicBoolean(true);
 
         if (parts.length < 2) {
-            System.out.println("Formato de entrada incorrecto.");
+            System.out.println("Incorrect input format.");
             return;
         }
 
         if (parts.length == 2) {
-            // Envío a usuario
+            // Sending to a user
             String user = parts[0];
             String filePath = parts[1];
             String extension = "";
@@ -346,9 +444,9 @@ public class UserManager {
         
             if (lastIndex != -1 && lastIndex < filePath.length() - 1) {
                 extension = filePath.substring(lastIndex + 1);
-                System.out.println("La extensión del archivo es: " + extension);
+                System.out.println("File extension: " + extension);
             } else {
-                System.out.println("El archivo no tiene una extensión válida.");
+                System.out.println("The file does not have a valid extension.");
             }
 
             String recipientJID = user + "@alumchat.xyz";
@@ -365,16 +463,16 @@ public class UserManager {
                 message.setBody("FILE:" + base64Encoded);
                 chat.send(message);
 
-                System.out.println("Archivo enviado correctamente.");
+                System.out.println("File sent successfully.");
             } catch (IOException | SmackException.NotConnectedException | InterruptedException e) {
                 e.printStackTrace();
-                System.out.println("Error al enviar el archivo.");
+                System.out.println("Error sending the file.");
             } finally {
                 chatActive.set(false);
             }
 
         } else if (parts.length == 3) {
-            // Envío a grupo
+            // Sending to a group
             String group = parts[0];
             String nickname = parts[1];
             String filePath = parts[2];
@@ -396,34 +494,40 @@ public class UserManager {
                 message.setBody("FILE:" + base64Encoded);
                 mucC.sendMessage(message);
     
-                System.out.println("Archivo enviado correctamente.");
+                System.out.println("File sent successfully.");
             } catch (IOException | SmackException.NotConnectedException | InterruptedException e) {
                 e.printStackTrace();
-                System.out.println("Error al enviar el archivo.");
+                System.out.println("Error sending the file.");
             }
 
         } else {
-            System.out.println("Formato de entrada incorrecto.");
+            System.out.println("Incorrect input format.");
         }
     }
 
+    /**
+     * Retrieves the presence type of a user.
+     *
+     * @param presence Presence: The presence object
+     * @return String: The presence type
+     */
     public String get_presence_type(Presence presence){
         String userStatus = "";
         if (!presence.isAvailable()) {
-                userStatus = "No disponible";
-            } else if (presence.getType() == Presence.Type.available) {
-                if (presence.getMode() == Presence.Mode.available) {
-                    userStatus = "Disponible";
-                } else if (presence.getMode() == Presence.Mode.away) {
-                    userStatus = "Ausente";
-                } else if (presence.getMode() == Presence.Mode.dnd) {
-                    userStatus = "Ocupado";
-                } else {
-                    userStatus = "No disponible";
-                }
+            userStatus = "Not available";
+        } else if (presence.getType() == Presence.Type.available) {
+            if (presence.getMode() == Presence.Mode.available) {
+                userStatus = "Available";
+            } else if (presence.getMode() == Presence.Mode.away) {
+                userStatus = "Away";
+            } else if (presence.getMode() == Presence.Mode.dnd) {
+                userStatus = "Busy";
             } else {
-                userStatus = "Desconectado";
+                userStatus = "Not available";
             }
+        } else {
+            userStatus = "Disconnected";
+        }
         return userStatus;
     }
 }

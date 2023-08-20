@@ -36,20 +36,25 @@ public class Main {
             switch (adminOption) {
                 case 1:
                     System.out.println("\n---- Register ----");
+                    // Get new user information
                     List<String> values = Terminal.getNewUserInfo();
+                    // Register the user
                     AM.Register(values.get(0), values.get(1));
                     break;
                 case 2:
                     System.out.println("\n---- Login ----");
+                    // Get user credentials
                     List<String> valuesU = Terminal.getUserCredentials();
+                    // Attempt to log in
                     actualSession = AM.Login(valuesU.get(0), valuesU.get(1));
                     if (actualSession == null){
-                        System.out.println("\nAlgo ha salido mal, intente nuevamente");
-                        System.out.println("Tu usuario o contrase\u00F1a est\u00E1n incorrectos");
-                        System.out.println("O tu cuenta no existe en el servidor");
+                        System.out.println("\nSomething went wrong, please try again");
+                        System.out.println("Your username or password is incorrect");
+                        System.out.println("Or your account doesn't exist on the server");
                     } else {
-                        System.out.println("Bienvenido!!!");
+                        System.out.println("Welcome!!!");
 
+                        // Start notification listener
                         notificationListener = new NotificationsListener(actualSession, UM);
                         notificationListener.start();
 
@@ -60,12 +65,14 @@ public class Main {
                             int userP = Terminal.userMenu(valuesU.get(0));
                             switch (userP) {
                                 case 1:
+                                    // Get all contacts
                                     UM.getAllContacts(actualSession);
                                     break;
                                 case 2:
+                                    // Add a contact
                                     username = Terminal.get_contact_info();
                                     if (username == null){
-                                        System.out.println("Entendido, saliendo de esta opci\u00F3n...\n");
+                                        System.out.println("Understood, returning to the menu\n");
                                         break;
                                     } else {
                                         String JID = username+"@alumchat.xyz";
@@ -73,9 +80,10 @@ public class Main {
                                     }
                                     break;
                                 case 3:
+                                    // Get user details
                                     username = Terminal.get_contact_info();
                                     if (username == null){
-                                        System.out.println("Entendido, saliendo de esta opci\u00F3n...\n");
+                                        System.out.println("Understood, returning to the menu\n");
                                         break;
                                     } else {
                                         String JID = username+"@alumchat.xyz";
@@ -85,76 +93,83 @@ public class Main {
                                     break;
 
                                 case 4:
+                                    // Chat 1 to 1
                                     UM.manageChat(actualSession);
                                     break;
 
                                 case 5:
+                                    // Groups
                                     UM.manageGroupChat(actualSession);
                                     break;
 
                                 case 6:
+                                    // Update user status
                                     String status = Terminal.get_new_status();
                                     UM.updateUserStatus(actualSession, status);
                                     break;
 
                                 case 7:
+                                    // Show notifications
                                     List<NotificationP> notis = UM.getPendingNotifications();
                                     Terminal.print_notis(notis);
                                     break;
                                     
                                 case 8:
+                                    // Send files
                                     UM.sendFile(actualSession);
                                     break;
 
                                 case 9:
+                                    // Close session
                                     actualSession = AM.CloseSession(actualSession);
                                     notificationListener.stopRunning();
                                     exit = true;
                                     break;
                             
                                 default:
-                                    System.out.println("Ingresa una opción válida!!");
+                                    System.out.println("Enter a valid option!!");
                                     break;
                             }
                         }
                     }
                     break;
                 case 3:
+                    // Close session
                     System.out.println("---- Close session ----");
                     if(actualSession != null){
                         actualSession = AM.CloseSession(actualSession);
                     } else {
-                        System.out.println("No hay ninguna sesi\u00F3n activa\n");
+                        System.out.println("No active session\n");
                     }
 
                     break;
                 case 4:
+                    // Delete account
                     System.out.println("---- Delete account ----");
                     List<String> valuesLog = Terminal.getUserCredentials();
                     actualSession = AM.Login(valuesLog.get(0), valuesLog.get(1));
                     int opc = Terminal.get_close_session_answer();
                     if(actualSession != null && opc == 1){
                         AM.DeleteAccount(actualSession);
-                        System.out.println("Cuenta eliminada del servidor exitosamente");
+                        System.out.println("Account deleted from the server successfully");
                     } else if(actualSession != null && opc == 0){
-                        System.out.println("Entendido, no se borrara esta cuenta");
+                        System.out.println("Understood, this account will not be deleted");
                     } else if(actualSession != null && opc == 2){
-                        System.out.println("Ha ocurrido un error, opcion invalida!");
+                        System.out.println("An error occurred, invalid option!");
                     } else {
-                        System.out.println("No hay ninguna sesi\u00F3n activa\nInicia sesi\u00F3n para poder eliminar tu cuenta\n");
+                        System.out.println("No active session\n Login to delete your account\n");
                     }
                     break;
 
                 case 5:
+                    // Exit
+                    System.out.println("Thanks for use this Client!!\n");
                     break;
             
                 default:
-                    System.out.println("Opci\u00F3n invalida");;
+                    System.out.println("Invalid option");
             }
         
         }
-
-        // Imprimir despedida
-
     }
 }

@@ -13,18 +13,30 @@ import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.roster.Roster;
 
+/**
+ * This class represents a thread that listens for incoming notifications.
+ */
 public class NotificationsListener extends Thread {
 
     private AbstractXMPPConnection connection;
     private boolean isRunning;
     private UserManager userManager;
 
+    /**
+     * Constructs a NotificationsListener with the given connection and user manager.
+     *
+     * @param connection The XMPP connection to listen for notifications.
+     * @param userManager The user manager to handle notifications.
+     */
     public NotificationsListener(AbstractXMPPConnection connection, UserManager userManager) {
         this.connection = connection;
         this.isRunning = true;
         this.userManager = userManager;
     }
 
+    /**
+     * Stops the notifications listening thread.
+     */
     public void stopRunning() {
         this.isRunning = false;
     }
@@ -46,7 +58,7 @@ public class NotificationsListener extends Thread {
         });
 
         try {
-            // Filtro para capturar todas las notificaciones
+            // Filter to capture all notifications
             StanzaListener notificationListener = new StanzaListener() {
                 @Override
                 public void processStanza(Stanza stanza) {
@@ -65,9 +77,7 @@ public class NotificationsListener extends Thread {
                 }
             };
 
-
-
-            // Agregar el filtro y el oyente al connection
+            // Add the filter and listener to the connection
             connection.addAsyncStanzaListener(notificationListener, null);
 
             // Keep the thread alive to continue listening for notifications

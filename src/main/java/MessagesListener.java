@@ -25,9 +25,17 @@ import org.jivesoftware.smack.chat2.OutgoingChatMessageListener;
 import org.jivesoftware.smack.packet.Message;
 import org.jxmpp.jid.EntityBareJid;
 
+/**
+ * This class listens for incoming and outgoing chat messages, processing text and file messages.
+ */
 public class MessagesListener implements IncomingChatMessageListener, OutgoingChatMessageListener, MessageListener{
     private AtomicBoolean chatActive;
 
+    /**
+     * Constructs a MessagesListener with the specified chat activity status.
+     *
+     * @param chatActive The atomic boolean indicating if the chat is active.
+     */
     public MessagesListener(AtomicBoolean chatActive) {
         this.chatActive = chatActive;
     }
@@ -66,8 +74,8 @@ public class MessagesListener implements IncomingChatMessageListener, OutgoingCh
                         System.out.println("Received text file content:");
                         System.out.println(textContent);
                     } else {
-                        System.out.println("Recibiendo archivo ."+ext);
-                        System.out.println("\nNo podemos abrir este tipo de archivos perdón");
+                        System.out.println("Receiving ." + ext + " file");
+                        System.out.println("\nWe cannot open this type of file, sorry.");
                     }
 
                 } else {
@@ -84,6 +92,11 @@ public class MessagesListener implements IncomingChatMessageListener, OutgoingCh
         }
     }
 
+    /**
+     * Processes an incoming message.
+     *
+     * @param message The incoming message to process.
+     */
     @Override
     public void processMessage(Message message) {
         if (chatActive.get()) {
@@ -119,8 +132,8 @@ public class MessagesListener implements IncomingChatMessageListener, OutgoingCh
                         System.out.println("Received text file content:");
                         System.out.println(textContent);
                     } else {
-                        System.out.println("Recibiendo archivo ."+ext);
-                        System.out.println("\nNo podemos abrir este tipo de archivos perdón");
+                        System.out.println("Receiving ." + ext + " file");
+                        System.out.println("\nWe cannot open this type of file, sorry.");
                     }
 
                 } else {
