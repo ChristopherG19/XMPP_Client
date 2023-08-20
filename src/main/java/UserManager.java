@@ -341,6 +341,16 @@ public class UserManager {
             // Envío a usuario
             String user = parts[0];
             String filePath = parts[1];
+            String extension = "";
+            int lastIndex = filePath.lastIndexOf(".");
+        
+            if (lastIndex != -1 && lastIndex < filePath.length() - 1) {
+                extension = filePath.substring(lastIndex + 1);
+                System.out.println("La extensión del archivo es: " + extension);
+            } else {
+                System.out.println("El archivo no tiene una extensión válida.");
+            }
+
             String recipientJID = user + "@alumchat.xyz";
 
             ChatManager chatManager = ChatManager.getInstanceFor(connection);
@@ -351,6 +361,7 @@ public class UserManager {
                 String base64Encoded = Base64.getEncoder().encodeToString(fileBytes);
 
                 Message message = new Message();
+                message.setSubject(extension);
                 message.setBody("FILE:" + base64Encoded);
                 chat.send(message);
 
@@ -369,10 +380,8 @@ public class UserManager {
             String filePath = parts[2];
             String JIDGroupC = group + "@conference.alumchat.xyz";
 
-            MultiUserChatManager groupsC = MultiUserChatManager.getInstanceFor(connection);
-            MultiUserChat mucC = groupsC.getMultiUserChat(JidCreate.entityBareFrom(JIDGroupC));
-            mucC.create(Resourcepart.from(group)).makeInstant();
-            mucC.sendConfigurationForm(new Form(DataForm.Type.submit));
+           MultiUserChatManager groups = MultiUserChatManager.getInstanceFor(connection);
+            MultiUserChat mucC = groups.getMultiUserChat(JidCreate.entityBareFrom(JIDGroupC));
             mucC.join(Resourcepart.from(nickname));
 
             mucC.addMessageListener(new MessagesListener(chatActive));

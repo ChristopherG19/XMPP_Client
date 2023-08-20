@@ -102,6 +102,10 @@ public class Main {
                                     Terminal.print_notis(notis);
                                     break;
                                     
+                                case 8:
+                                    UM.sendFile(actualSession);
+                                    break;
+
                                 case 9:
                                     actualSession = AM.CloseSession(actualSession);
                                     notificationListener.stopRunning();
@@ -109,6 +113,7 @@ public class Main {
                                     break;
                             
                                 default:
+                                    System.out.println("Ingresa una opción válida!!");
                                     break;
                             }
                         }

@@ -327,12 +327,14 @@ public class Terminal {
                             String username = getValidInput("Enter the username: ");
                             String path = getValidInput("Enter the path: ");
                             props = username + "$" + path;
+                            confi = true;
                             break;
                         case 2:
                             String groupName = getValidInput("Enter the groupname: ");
                             String nickName = getValidInput("Enter the nickname: ");
                             String pathB = getValidInput("Enter the path: ");
                             props = groupName + "$" + nickName + "$" + pathB;
+                            confi = true;
                             break;
                     
                         default:
