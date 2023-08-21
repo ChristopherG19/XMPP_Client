@@ -25,7 +25,7 @@ public class Terminal {
     public int adminMenu(){
         int option = 0;
 
-        System.out.println("\n----- Chat Network -----");
+        System.out.println("\n----- Chat Redes -----");
         System.out.println("Available options: ");
         System.out.println("1) Register a new account on the server");
         System.out.println("2) Log in with an account");

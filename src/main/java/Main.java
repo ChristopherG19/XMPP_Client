@@ -111,7 +111,11 @@ public class Main {
                                 case 7:
                                     // Show notifications
                                     List<NotificationP> notis = UM.getPendingNotifications();
-                                    Terminal.print_notis(notis);
+                                    if(notis.size() > 0){
+                                        Terminal.print_notis(notis);
+                                    } else {
+                                        System.out.println("You don't have notifications yet!");
+                                    }
                                     break;
                                     
                                 case 8:

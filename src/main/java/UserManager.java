@@ -152,7 +152,7 @@ public class UserManager {
             userDetails += "+--------------------------+------------------------+-----------------+\n";
 
             userDetails += "\n+--------------------------+------------------------+-----------------+\n";
-            userDetails += String.format("| %-24s | %-20s | %-15s |\n", "Can See My Presence", "Can See His Presence", "Status");
+            userDetails += String.format("| %-24s | %-22s | %-15s |\n", "Can See My Presence", "Can See His Presence", "Status");
             userDetails += "+--------------------------+------------------------+-----------------+\n";
             userDetails += String.format("| %-24s | %-22s | %-15s |\n", seeMy, seeHis, status);
             userDetails += "+--------------------------+------------------------+-----------------+\n";
