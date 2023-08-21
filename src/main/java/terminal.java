@@ -392,40 +392,15 @@ public class Terminal {
     public String get_file_props(){
         String props = "";
         boolean confi = false;
-        int option = 0;
 
         while(!confi){
-            System.out.println("Available options for file sending");
-            System.out.println("1) Send to a user");
-            System.out.println("2) Send to a group");
-            System.out.print("Select an option: ");
+            System.out.println("Enter the following data to send files...");
             try {
-                if (scan.hasNextInt()) {
-                    option = scan.nextInt();
-                    switch (option) {
-                        case 1:
-                            String username = getValidInput("Enter the username: ");
-                            String path = getValidInput("Enter the path: ");
-                            props = username + "$" + path;
-                            confi = true;
-                            break;
-                        case 2:
-                            String groupName = getValidInput("Enter the groupname: ");
-                            String nickName = getValidInput("Enter the nickname: ");
-                            String pathB = getValidInput("Enter the path: ");
-                            props = groupName + "$" + nickName + "$" + pathB;
-                            confi = true;
-                            break;
-                    
-                        default:
-                            System.out.println("Invalid option!!!");
-                            break;
-                    }
-                    
-                } else {
-                    System.out.println("Enter numeric values!!!\n");
-                    scan.next();
-                }
+                String username = getValidInput("Enter the username: ");
+                String path = getValidInput("Enter the path: ");
+                props = username + "$" + path;
+                confi = true;
+                break;
             } catch (Exception e) {
                 System.out.println("An error occurred in input. Enter numeric values!!!\n");
                 scan.next();

@@ -471,35 +471,6 @@ public class UserManager {
                 chatActive.set(false);
             }
 
-        } else if (parts.length == 3) {
-            // Sending to a group
-            String group = parts[0];
-            String nickname = parts[1];
-            String filePath = parts[2];
-            String JIDGroupC = group + "@conference.alumchat.xyz";
-
-           MultiUserChatManager groups = MultiUserChatManager.getInstanceFor(connection);
-            MultiUserChat mucC = groups.getMultiUserChat(JidCreate.entityBareFrom(JIDGroupC));
-            mucC.join(Resourcepart.from(nickname));
-
-            mucC.addMessageListener(new MessagesListener(chatActive));
-            mucC.addParticipantStatusListener(new ParticipantsListener());
-            mucC.addUserStatusListener(new ParticipantsListener());
-
-            try {
-                byte[] fileBytes = Files.readAllBytes(Paths.get(filePath));
-                String base64Encoded = Base64.getEncoder().encodeToString(fileBytes);
-    
-                Message message = new Message();
-                message.setBody("FILE:" + base64Encoded);
-                mucC.sendMessage(message);
-    
-                System.out.println("File sent successfully.");
-            } catch (IOException | SmackException.NotConnectedException | InterruptedException e) {
-                e.printStackTrace();
-                System.out.println("Error sending the file.");
-            }
-
         } else {
             System.out.println("Incorrect input format.");
         }
