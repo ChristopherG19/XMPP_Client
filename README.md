@@ -12,7 +12,6 @@
 5. [Usage](#usage)
 6. [Getting Started](#getting-started)
 7. [Dependencies](#dependencies)
-8. [License](#license)
 
 ## Introduction
 
@@ -115,7 +114,3 @@ The XMPP Chat Client relies on the following libraries:
       <version>4.2.0</version>
   </dependency>
   ```
-
-## License
-
-The XMPP Chat Client is licensed under the [MIT License](LICENSE).
