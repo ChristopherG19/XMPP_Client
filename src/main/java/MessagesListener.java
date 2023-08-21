@@ -40,6 +40,8 @@ public class MessagesListener implements IncomingChatMessageListener, OutgoingCh
         this.chatActive = chatActive;
     }
 
+    // With ChatGPT I build this reader and display images or print the txt content
+
     @Override
     public void newIncomingMessage(EntityBareJid from, Message message, Chat chat) {
         if (chatActive.get()) {
