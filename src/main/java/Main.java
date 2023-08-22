@@ -30,7 +30,7 @@ public class Main {
         int adminOption = 0;
         AbstractXMPPConnection actualSession = null;
         NotificationsListener notificationListener = null;
-        while (adminOption != 5){
+        while (adminOption != 4){
             adminOption = Terminal.adminMenu();
         
             switch (adminOption) {
@@ -138,16 +138,6 @@ public class Main {
                     }
                     break;
                 case 3:
-                    // Close session
-                    System.out.println("---- Close session ----");
-                    if(actualSession != null){
-                        actualSession = AM.CloseSession(actualSession);
-                    } else {
-                        System.out.println("No active session\n");
-                    }
-
-                    break;
-                case 4:
                     // Delete account
                     System.out.println("---- Delete account ----");
                     List<String> valuesLog = Terminal.getUserCredentials();
@@ -165,7 +155,7 @@ public class Main {
                     }
                     break;
 
-                case 5:
+                case 4:
                     // Exit
                     System.out.println("Thanks for use this Client!!\n");
                     break;

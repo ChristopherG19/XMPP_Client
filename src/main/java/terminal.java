@@ -29,9 +29,8 @@ public class Terminal {
         System.out.println("Available options: ");
         System.out.println("1) Register a new account on the server");
         System.out.println("2) Log in with an account");
-        System.out.println("3) Log out with an account");
-        System.out.println("4) Delete account from the server");
-        System.out.println("5) Exit");
+        System.out.println("3) Delete account from the server");
+        System.out.println("4) Exit");
         System.out.print("\nEnter an option: ");
     
         try{
@@ -364,9 +363,11 @@ public class Terminal {
         Boolean valid = false;
         while (!valid) {
             System.out.print(prompt);
-            input = scan.nextLine().trim();
-            
-            if (!input.isEmpty()) {
+            if(scan.hasNextLine()){
+                input = scan.nextLine().trim();
+                if(input.isEmpty()){
+                    continue;
+                }
                 System.out.print("\nConfirm that " + input + " is correct? (y/n): ");
                 String confirmation = scan.nextLine().toLowerCase();
                 
@@ -375,10 +376,7 @@ public class Terminal {
                 } else if (confirmation.equals("n")) {
                     continue;
                 }
-            } else {
-                System.out.println("Invalid input. Please try again.");
             }
-            
         }
 
         return input;

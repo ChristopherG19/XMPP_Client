@@ -95,7 +95,7 @@ public class UserManager {
             Presence presence = roster.getPresence(entry.getJid());
             String userStatus = get_presence_type(presence);
             String status = (presence.getStatus() == null) ? "No status" : presence.getStatus();
-            String name = (entry.getName() == null) ? entry.getJid().toString().substring(0, entry.getJid().toString().indexOf("@")) : entry.getName();
+            String name = (entry.getName() == null) ? entry.getJid().toString().substring(0, entry.getJid().toString().indexOf("@")) : entry.getName().toString().substring(0, entry.getJid().toString().indexOf("@"));
 
             System.out.printf("| %-15s | %-24s | %-15s | %-21s |\n", name, entry.getJid(), userStatus, status);
             System.out.println("+-----------------+--------------------------+-----------------+-----------------------+");
