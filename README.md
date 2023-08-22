@@ -114,3 +114,5 @@ The XMPP Chat Client relies on the following libraries:
       <version>4.2.0</version>
   </dependency>
   ```
+
+PS. I created this README.md with the assistance of ChatGPT. I provided the necessary information and the desired format to generate the syntax of the file
