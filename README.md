@@ -28,7 +28,7 @@ The XMPP Chat Client project aims to develop a client for instant messaging that
 
 ### Features and Limitations
 
-The project entails creating an XMPP client that operates based on the XMPP protocol. The development will be undertaken individually. The client must encompass, at a minimum, the following functionalities:
+The project entails creating an XMPP client that operates based on the XMPP protocol.
 
 #### User Management
 
@@ -48,7 +48,7 @@ The project entails creating an XMPP client that operates based on the XMPP prot
 7. **Send/Receive Notifications**: Provide the ability to send and receive notifications.
 8. **File Transfer**: Allow users to send and receive files.
 
-The project's user interface will be in the form of a Command-Line Interface (CLI). You are free to choose any programming language as long as it supports cross-platform compatibility. While libraries for XMPP communication can be used, third-party libraries that solve concurrent programming challenges are prohibited.
+The project's user interface is in the form of a Command-Line Interface (CLI).
 
 ## Implementation
 
