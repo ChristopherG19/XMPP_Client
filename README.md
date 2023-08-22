@@ -54,7 +54,7 @@ The project's user interface will be in the form of a Command-Line Interface (CL
 
 ### User Management
 
-The `UserManager` class provides methods to manage user-related actions, including account registration, login, contact management, and presence updates.
+The `UserManager` class provides methods to manage user-related actions, including account registration, login, contact management, and presence updates. (All the methods includes a description with javadocs)
 
 #### Methods
 
